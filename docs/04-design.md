@@ -2,44 +2,40 @@
 
 ## 1. Technology Stack Decision
 
-The app will use:
+The app uses:
 
-- **HTML:** Semantic page structure and accessible form controls.
-- **CSS:** Responsive layout and visual states for active, completed, and filtered tasks.
-- **Vanilla JavaScript:** Task creation, rendering, completion, deletion, filtering, validation, and storage behavior.
-- **`localStorage`:** Browser-based task persistence.
-- **No frameworks or build tools:** The source files run directly in a modern browser.
+* **HTML:** Semantic page structure and accessible form controls.
+* **CSS:** Responsive layout and visual states for active, completed, and filtered tasks.
+* **Vanilla JavaScript:** Task creation, rendering, completion, deletion, filtering, validation, and browser storage behavior.
+* **`localStorage`:** Browser-based task persistence.
+* **Jest:** Unit testing for pure task logic.
+* **No frontend framework or build tool:** The source files run directly in a modern browser.
 
-This stack fits a two-day project because it has minimal setup, no build configuration, and no backend to deploy or maintain. The team can focus on the required user-facing behavior, tests, and browser verification. Static files also support offline use and simple deployment.
+This stack fits a two-day project because it has minimal setup, no build configuration for the browser app, and no backend to deploy or maintain. The project can focus on the required user-facing behavior, tests, documentation, and browser verification. Static files also support offline use and simple local execution.
 
 ## 2. File and Module Structure
 
 ```text
 src/
 ├── index.html
-├── styles.css
+├── style.css
 ├── app.js
-├── tasks.js
-└── storage.js
+└── task-logic.js
+
 tests/
-├── test-runner.html
-├── tasks.test.js
-└── storage.test.js
+└── task.test.js
 ```
 
 ### Source Files
 
-- `src/index.html`: Defines the app's semantic UI structure and loads the CSS and JavaScript modules.
-- `src/styles.css`: Styles the layout, form, filter controls, task cards, completion states, empty states, and responsive behavior.
-- `src/app.js`: Initializes the app, handles DOM events, tracks the selected filter, and renders the user interface.
-- `src/tasks.js`: Contains task creation, validation, completion, deletion, and filtering logic.
-- `src/storage.js`: Reads and writes the task collection using `localStorage` and handles invalid stored data.
+* `src/index.html`: Defines the app's semantic UI structure and loads the CSS and JavaScript files.
+* `src/style.css`: Styles the layout, form, filter controls, task cards, completion states, empty states, and responsive behavior.
+* `src/app.js`: Initializes the app, handles DOM events, manages the selected filter, renders the user interface, and saves/loads tasks using `localStorage`.
+* `src/task-logic.js`: Contains pure task logic for creating, deleting, completing, and filtering tasks. These functions can be imported by Jest tests without loading the browser DOM.
 
 ### Test Files
 
-- `tests/test-runner.html`: Loads the browser-based test files and displays test results without a build tool.
-- `tests/tasks.test.js`: Tests public task behaviors such as validation, creation, completion, deletion, and filtering.
-- `tests/storage.test.js`: Tests saving, loading, and handling invalid `localStorage` data.
+* `tests/task.test.js`: Uses Jest to test public task behaviors such as task creation, deletion, completion toggling, and filtering.
 
 ## 3. Data Model
 
@@ -56,24 +52,28 @@ Each task is represented by the following object:
 }
 ```
 
-| Field | Type | Purpose |
-|---|---|---|
-| `id` | String | Uniquely identifies the task for update and deletion operations. |
-| `title` | String | Describes the academic work to complete. |
-| `subject` | String | Identifies the related course or subject. |
-| `dueDate` | String | Stores the due date in `YYYY-MM-DD` format. |
-| `completed` | Boolean | Indicates whether the task is active or completed. |
-| `createdAt` | String | Stores the creation time as an ISO timestamp. |
+| Field       | Type    | Purpose                                                            |
+| ----------- | ------- | ------------------------------------------------------------------ |
+| `id`        | String  | Uniquely identifies the task for update and deletion operations.   |
+| `title`     | String  | Describes the academic work to complete.                           |
+| `subject`   | String  | Identifies the related course or subject.                          |
+| `dueDate`   | String  | Stores the optional due date in `YYYY-MM-DD` format when provided. |
+| `completed` | Boolean | Indicates whether the task is active or completed.                 |
+| `createdAt` | String  | Stores the creation time as an ISO timestamp.                      |
 
-Tasks are stored in `localStorage` as a JSON array under a single key such as `student-task-tracker.tasks`.
+Tasks are stored in `localStorage` as a JSON array under the key:
+
+```text
+student-tasks
+```
 
 ## 4. User Flow
 
 ### A. Add a Task
 
-1. The student enters a title, subject, and due date in the Add Task Form.
+1. The student enters a title, subject, and optional due date in the Add Task Form.
 2. The student submits the form.
-3. The app validates all required values.
+3. The app validates the required title and subject fields.
 4. If validation fails, the app shows a clear message and does not create a task.
 5. If validation succeeds, the app creates an active Task object with a unique ID and creation timestamp.
 6. The app saves the updated task collection to `localStorage`.
@@ -81,14 +81,14 @@ Tasks are stored in `localStorage` as a JSON array under a single key such as `s
 
 ### B. Mark a Task Complete
 
-1. The student selects the completion control on an active Task Card.
-2. The app finds the task by its ID and changes `completed` to `true`.
+1. The student selects the completion checkbox on a Task Card.
+2. The app finds the task by its ID and toggles the `completed` value.
 3. The app saves the updated task collection to `localStorage`.
 4. The app re-renders the list so the completed style and current filter are applied.
 
 ### C. Delete a Task
 
-1. The student selects the delete control on a Task Card.
+1. The student selects the delete button on a Task Card.
 2. The app removes the task with the matching ID from the task collection.
 3. The app saves the updated collection to `localStorage`.
 4. The app re-renders the list and shows an Empty State if no tasks match the current filter.
@@ -100,7 +100,7 @@ Tasks are stored in `localStorage` as a JSON array under a single key such as `s
 3. The app filters the in-memory task collection by completion status.
 4. The Task List renders only matching tasks or displays a filtered Empty State.
 
-The filter UI will use three clearly labeled buttons. Buttons are simple to implement, remain visible on mobile, and make the selected state easy to communicate.
+The filter UI uses three clearly labeled buttons. Buttons are simple to implement, remain visible on mobile, and make the selected state easy to communicate.
 
 ## 5. Component Breakdown
 
@@ -110,7 +110,7 @@ Displays the product name and a short description of the app's purpose.
 
 ### Add Task Form
 
-Contains labeled fields for title, subject, and due date, a submit button, and an area for validation messages. It submits valid task data to the app logic.
+Contains labeled fields for title, subject, and optional due date, a submit button, and an area for validation messages. It submits valid task data to the app logic.
 
 ### Filter Bar
 
@@ -122,7 +122,7 @@ Contains the Task Cards that match the selected filter. It is responsible for sh
 
 ### Task Card
 
-Displays one task's title, subject, due date, and status. It provides controls to mark an active task complete and delete the task.
+Displays one task's title, subject, due date, and status. It provides controls to mark a task complete and delete the task.
 
 ### Empty State
 
@@ -132,4 +132,4 @@ Displays a clear message when there are no tasks or when no tasks match the sele
 
 1. **`localStorage` instead of a backend:** This enables offline use and fast static deployment, but data is limited to one browser and can be lost if browser storage is cleared.
 2. **Vanilla JavaScript instead of React or another framework:** This reduces setup and implementation overhead for a small two-day app, but requires manual DOM rendering and state coordination.
-3. **Small separate modules instead of one JavaScript file:** Separating task logic, storage, and UI behavior improves testability and clarity, but introduces slightly more file and import management.
+3. **Pure task logic separated from UI code:** Moving task operations into `src/task-logic.js` improves testability and allows Jest to test the core behavior without a browser, while `src/app.js` remains responsible for rendering, events, and `localStorage`.
