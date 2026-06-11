@@ -85,4 +85,12 @@ student-task-tracker/
 
 ## Screenshots
 
-See `assets/screenshots/`.
+Testing and browser verification evidence are stored in the `assets/screenshots/` folder.
+
+* RED failing test evidence: `assets/screenshots/red-failing-test.png`
+* GREEN passing test evidence: `assets/screenshots/green-passing-test.png`
+* App working in browser: `assets/screenshots/app-working-browser.png`
+* Chrome DevTools localStorage check: `assets/screenshots/devtools-localstorage.png`
+* Chrome DevTools console check: `assets/screenshots/devtools-console.png`
+* Responsive layout check at 375px: `assets/screenshots/mobile-375px.png`
+

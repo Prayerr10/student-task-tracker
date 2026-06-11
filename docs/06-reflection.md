@@ -26,7 +26,9 @@ Codex CLI initially produced a CSS container width expression without `calc()`, 
 
 ## 7. What did you verify manually?
 
-I reviewed the requirements, PRD, issue dependencies, design decisions, file structure, and code to confirm they matched the assignment scope. I checked the generated mobile screenshot and confirmed that the corrected layout fit a 375px viewport, and I reviewed the Jest output showing seven passing tests. The Chrome DevTools console, interactive browser workflow, and `localStorage` behavior should still be completed manually using the checklist in `docs/05-tdd-and-testing.md`.
+I manually verified the main browser workflow in Chrome by adding a task, refreshing the page, marking a task as completed, deleting a task, and using the All, Active, and Completed filters. I also checked Chrome DevTools Console and confirmed that no unexpected errors appeared during the main workflow.
+
+I verified localStorage manually by checking that the student-tasks key was created and that task data remained after refreshing the page. I also tested the layout at a 375px mobile viewport and confirmed that the form, filter buttons, and task cards remained usable.
 
 ## 8. What software engineering decision are you most confident about?
 
@@ -34,4 +36,6 @@ I am most confident about separating pure task logic from DOM, rendering, and st
 
 ## 9. What would you improve with more time?
 
-With more time, I would add automated browser tests for the complete user workflow, validation, and `localStorage` persistence. I would also improve error feedback when browser storage is unavailable, add more accessibility checks, and test the layout across more browsers and screen sizes. Finally, I would capture the required failing and passing test screenshots and complete the Chrome DevTools notes with direct manual evidence.
+With more time, I would add automated browser tests for the complete user workflow, including task creation, completion, deletion, filtering, and localStorage persistence. I would also improve accessibility, add clearer validation messages, and test the layout across more browsers and screen sizes.
+
+I would also consider adding optional features such as editing existing tasks, sorting tasks by due date, and exporting tasks. These features were not included in the current version because the project needed to stay small and practical for a two-day software engineering assignment.
