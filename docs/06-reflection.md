@@ -28,7 +28,7 @@ Codex CLI initially produced a CSS container width expression without `calc()`, 
 
 I manually verified the main browser workflow in Chrome by adding a task, refreshing the page, marking a task as completed, deleting a task, and using the All, Active, and Completed filters. I also checked Chrome DevTools Console and confirmed that no unexpected errors appeared during the main workflow.
 
-I verified localStorage manually by checking that the student-tasks key was created and that task data remained after refreshing the page. I also tested the layout at a 375px mobile viewport and confirmed that the form, filter buttons, and task cards remained usable.
+I verified localStorage manually by checking that the `student-tasks` key was created and that task data remained after refreshing the page. I also tested the layout at a 375px mobile viewport and confirmed that the form, filter buttons, and task cards remained usable.
 
 ## 8. What software engineering decision are you most confident about?
 
