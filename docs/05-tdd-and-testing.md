@@ -23,24 +23,49 @@ Test Suites: 1 passed, 1 total
 Tests:       7 passed, 7 total
 ```
 
+Evidence:
+
+* `assets/screenshots/red-failing-test.png`
+* `assets/screenshots/green-passing-test.png`
+
+---
+
 ## 2. Test Coverage Table
 
-| Function tested | What it checks | Expected result |
-|---|---|---|
-| `addTask` | Creates a task with the submitted title, subject, and due date | The returned list contains a task with the submitted values |
-| `addTask` | Sets initial status and generated fields | `completed` is `false`; `id` and `createdAt` are strings |
-| `addTask` | Generates an ID for each new task | Two separately created tasks have different IDs |
-| `deleteTask` | Removes the task with the matching ID | The matching task is absent from the returned list |
-| `deleteTask` | Preserves tasks with other IDs | Non-matching tasks remain unchanged |
-| `toggleComplete` | Changes an incomplete task to completed | The matching task has `completed: true` |
-| `toggleComplete` | Changes a completed task back to active | Toggling again sets `completed: false` |
-| `filterTasks` with `"active"` | Selects only incomplete tasks | Only tasks with `completed: false` are returned |
-| `filterTasks` with `"completed"` | Selects only completed tasks | Only tasks with `completed: true` are returned |
-| `filterTasks` with `"all"` | Returns every task regardless of status | All input tasks are returned |
+| Function tested                  | What it checks                                                 | Expected result                                             |
+| -------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
+| `addTask`                        | Creates a task with the submitted title, subject, and due date | The returned list contains a task with the submitted values |
+| `addTask`                        | Sets initial status and generated fields                       | `completed` is `false`; `id` and `createdAt` are strings    |
+| `addTask`                        | Generates an ID for each new task                              | Two separately created tasks have different IDs             |
+| `deleteTask`                     | Removes the task with the matching ID                          | The matching task is absent from the returned list          |
+| `deleteTask`                     | Preserves tasks with other IDs                                 | Non-matching tasks remain unchanged                         |
+| `toggleComplete`                 | Changes an incomplete task to completed                        | The matching task has `completed: true`                     |
+| `toggleComplete`                 | Changes a completed task back to active                        | Toggling again sets `completed: false`                      |
+| `filterTasks` with `"active"`    | Selects only incomplete tasks                                  | Only tasks with `completed: false` are returned             |
+| `filterTasks` with `"completed"` | Selects only completed tasks                                   | Only tasks with `completed: true` are returned              |
+| `filterTasks` with `"all"`       | Returns every task regardless of status                        | All input tasks are returned                                |
+
+---
 
 ## 3. TDD Evidence
 
-### RED Phase
+### TDD Issue 1: User can add a new task
+
+#### Issue tested
+
+Issue 1 — User can add a new task
+
+#### Behavior under test
+
+A student can create a task with a title, subject, optional due date, generated ID, `createdAt` value, and default completed status.
+
+#### Public interface
+
+```js
+addTask(tasks, title, subject, dueDate)
+```
+
+#### RED
 
 The first task-creation test described the required Task fields before `addTask` existed as an importable pure function:
 
@@ -56,29 +81,30 @@ describe("addTask", () => {
       dueDate: "2026-06-20",
       completed: false
     }));
+
     expect(task.id).toEqual(expect.any(String));
     expect(task.createdAt).toEqual(expect.any(String));
   });
 });
 ```
 
-Before the pure logic module existed, this test could not import `addTask`. Jest would fail before running the assertion with an error similar to:
+Before the pure logic module was available, the test failed because Jest could not use `addTask` as an importable function. This confirmed that the task creation behavior was not yet independently testable outside the browser DOM.
 
-```text
-Cannot find module '../src/task-logic' from 'tests/task.test.js'
-```
-
-If the module existed but did not export `addTask`, the call would fail with:
+Possible failing result during the RED phase:
 
 ```text
 TypeError: addTask is not a function
 ```
 
-This confirmed that task creation was still coupled to browser DOM code and was not independently testable.
+RED evidence screenshot:
 
-### GREEN Phase
+```text
+assets/screenshots/red-failing-test.png
+```
 
-The minimum pure implementation creates a valid Task object and returns a new task list:
+#### GREEN
+
+The minimum pure implementation created a valid Task object and returned a new task list:
 
 ```js
 function addTask(tasks, title, subject, dueDate = "") {
@@ -103,69 +129,196 @@ function addTask(tasks, title, subject, dueDate = "") {
 }
 ```
 
-After implementing and exporting this function, the task-creation test passed. The same approach was then applied to `deleteTask`, `toggleComplete`, and `filterTasks`.
+After implementing and exporting this function, the task creation test passed.
 
-### REFACTOR
+GREEN evidence screenshot:
 
-After the tests passed, task operations were moved into the shared `src/task-logic.js` module. The functions now accept a task array and return a new array instead of directly mutating browser state or rendering the DOM.
+```text
+assets/screenshots/green-passing-test.png
+```
 
-This refactor improved the project by:
+#### REFACTOR
 
-- Separating business logic from UI and storage concerns.
-- Making the same logic usable by both Jest and the browser app.
-- Avoiding direct mutation of the original task array.
-- Keeping `src/app.js` focused on event handling, rendering, and persistence.
+The task creation logic was moved into `src/task-logic.js` so it could be tested separately from DOM rendering and browser storage. This made the logic reusable by both Jest tests and the browser app.
 
-All seven tests remained passing after the refactor.
+#### Final result
+
+Pass.
+
+---
+
+### TDD Issue 2: User can mark a task as completed
+
+#### Issue tested
+
+Issue 3 — User can mark a task as completed
+
+#### Behavior under test
+
+A student can toggle a task from active to completed and then toggle it back to active.
+
+#### Public interface
+
+```js
+toggleComplete(tasks, id)
+```
+
+#### RED
+
+The test expected the matching task's `completed` value to change when `toggleComplete` was called. Before the pure logic function was available, this behavior could not be tested without depending on the browser UI.
+
+```js
+describe("toggleComplete", () => {
+  it("flips completed from false to true and back", () => {
+    const tasks = addTask([], "Read chapter", "Software Engineering", "2026-06-25");
+    const taskId = tasks[0].id;
+
+    const completedTasks = toggleComplete(tasks, taskId);
+    expect(completedTasks[0].completed).toBe(true);
+
+    const activeTasks = toggleComplete(completedTasks, taskId);
+    expect(activeTasks[0].completed).toBe(false);
+  });
+});
+```
+
+Possible failing result during the RED phase:
+
+```text
+TypeError: toggleComplete is not a function
+```
+
+RED evidence screenshot:
+
+```text
+assets/screenshots/red-failing-test.png
+```
+
+#### GREEN
+
+The minimum implementation returned a new task list and changed only the matching task:
+
+```js
+function toggleComplete(tasks, id) {
+  return tasks.map((task) => {
+    if (task.id !== id) {
+      return task;
+    }
+
+    return {
+      ...task,
+      completed: !task.completed
+    };
+  });
+}
+```
+
+After implementing this function, the completion toggle test passed together with the other task logic tests.
+
+GREEN evidence screenshot:
+
+```text
+assets/screenshots/green-passing-test.png
+```
+
+#### REFACTOR
+
+The function was written without mutating the original task array. This made the behavior safer, easier to test, and easier to reuse in the browser app.
+
+#### Final result
+
+Pass.
+
+---
 
 ## 4. Browser Verification Checklist
 
-Complete these checks manually in Chrome using the running static app:
+Manual checks completed in Chrome using the running static app:
 
-- [ ] Add a task and confirm it appears in the list.
-- [ ] Refresh the page and confirm tasks are still there through `localStorage`.
-- [ ] Mark a task complete and confirm its visual appearance changes.
-- [ ] Delete a task and confirm it disappears.
-- [ ] Filter by Active and confirm only incomplete tasks are shown.
-- [ ] Filter by Completed and confirm only completed tasks are shown.
-- [ ] Open Chrome DevTools Console and confirm there are no unexpected errors.
-- [ ] Resize the window to 375px wide and confirm the layout remains usable.
+* [x] Add a task and confirm it appears in the list.
+* [x] Refresh the page and confirm tasks are still there through `localStorage`.
+* [x] Mark a task complete and confirm its visual appearance changes.
+* [x] Delete a task and confirm it disappears.
+* [x] Filter by Active and confirm only incomplete tasks are shown.
+* [x] Filter by Completed and confirm only completed tasks are shown.
+* [x] Open Chrome DevTools Console and confirm there are no unexpected errors.
+* [x] Resize the window to 375px wide and confirm the layout remains usable.
+
+Evidence:
+
+* `assets/screenshots/app-working-browser.png`
+* `assets/screenshots/devtools-localstorage.png`
+* `assets/screenshots/devtools-console.png`
+* `assets/screenshots/mobile-375px.png`
+
+---
 
 ## 5. Chrome DevTools Notes
 
-Complete this section manually after browser testing.
-
 ### Test Environment
 
-- Chrome version:
-- Operating system:
-- Test date:
-- App URL or file path:
+* Browser: Chrome
+* Operating system: Windows
+* Test date: June 11, 2026
+* App URL: `http://127.0.0.1:5500/`
 
 ### Console Check
 
-- Unexpected errors found:
-- Warnings found:
-- Notes:
+* Unexpected errors found: No
+* Warnings found: No blocking warnings found
+* Notes: The Console was checked after adding a task, marking a task complete, using the Active and Completed filters, and deleting a task.
+
+Evidence:
+
+```text
+assets/screenshots/devtools-console.png
+```
 
 ### Local Storage Check
 
-- `student-tasks` key present:
-- Added tasks persisted after refresh:
-- Completed status persisted after refresh:
-- Deleted tasks remained deleted after refresh:
-- Notes:
+* `student-tasks` key present: Yes
+* Added tasks persisted after refresh: Yes
+* Completed status persisted after refresh: Yes
+* Deleted tasks remained deleted after refresh: Yes
+* Notes: Task data was stored in browser `localStorage` using the `student-tasks` key.
+
+Evidence:
+
+```text
+assets/screenshots/devtools-localstorage.png
+```
 
 ### Responsive Check at 375px
 
-- Form usable:
-- Filter buttons usable:
-- Task cards readable:
-- Horizontal overflow found:
-- Notes:
+* Form usable: Yes
+* Filter buttons usable: Yes
+* Task cards readable: Yes
+* Horizontal overflow found: No
+* Notes: The layout was tested at 375px width and remained usable on a mobile-sized viewport.
+
+Evidence:
+
+```text
+assets/screenshots/mobile-375px.png
+```
 
 ### Final Browser Verification Result
 
-- Result: Pass / Fail / Pass with known limitations
-- Known limitations:
-- Screenshot or evidence path:
+* Result: Pass
+* Known limitations: Data is stored only in the current browser. It can be removed if the user clears browser storage.
+* Screenshot or evidence path:
+
+  * `assets/screenshots/red-failing-test.png`
+  * `assets/screenshots/green-passing-test.png`
+  * `assets/screenshots/app-working-browser.png`
+  * `assets/screenshots/devtools-localstorage.png`
+  * `assets/screenshots/devtools-console.png`
+  * `assets/screenshots/mobile-375px.png`
+
+---
+
+## 6. Final Testing Result
+
+The automated Jest tests passed, and the browser verification was completed manually in Chrome. The application successfully supports adding tasks, viewing tasks, marking tasks as completed, deleting tasks, filtering by status, and persisting data through `localStorage`.
+
+Final result: Pass.
