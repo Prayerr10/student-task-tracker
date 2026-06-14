@@ -6,6 +6,7 @@ const {
   formatDueDate,
   isAcademicTaskOverdue,
   orderAcademicTasks,
+  resolveFilterAfterDeletion,
   toggleAcademicTaskStatus,
   validateAcademicTaskInput
 } = require("../src/task-logic");
@@ -284,6 +285,16 @@ describe("deleteAcademicTask", () => {
 
     expect(deleteAcademicTask(academicTasks, "first")).toEqual([secondTask]);
     expect(academicTasks).toEqual([firstTask, secondTask]);
+  });
+});
+
+describe("resolveFilterAfterDeletion", () => {
+  it("resets the filter to All when the final Academic Task is deleted", () => {
+    expect(resolveFilterAfterDeletion([], "Completed")).toBe("All");
+  });
+
+  it("preserves the current filter while Academic Tasks remain", () => {
+    expect(resolveFilterAfterDeletion([{ id: "task" }], "Completed")).toBe("Completed");
   });
 });
 

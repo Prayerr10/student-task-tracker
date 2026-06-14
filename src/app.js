@@ -285,6 +285,10 @@ deleteDialog.addEventListener("close", () => {
     const deletedIndex = filteredTasksBeforeDelete.findIndex((academicTask) => academicTask.id === academicTaskId);
     const deletedAcademicTask = academicTasks.find((academicTask) => academicTask.id === academicTaskId);
     academicTasks = AcademicTaskDomain.deleteAcademicTask(academicTasks, academicTaskId);
+    activeFilter = AcademicTaskDomain.resolveFilterAfterDeletion(academicTasks, activeFilter);
+    filterButtons.forEach((filterButton) => {
+      filterButton.setAttribute("aria-pressed", String(filterButton.dataset.filter === activeFilter));
+    });
     renderAcademicTasks();
     const saveResult = persistAcademicTasks();
     if (saveResult.warning) {
