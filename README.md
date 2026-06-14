@@ -48,7 +48,7 @@ Final browser verification and regression evidence:
 - [Final empty state after deleting the last task](assets/screenshots/issue-27-final-empty-state-320.png)
 - [Filtered empty state before the final delete](assets/screenshots/issue-27-filtered-empty-state-320.png)
 
-Historical TDD and browser evidence from earlier issues remains in `assets/screenshots/` and is documented in `docs/05-tdd-and-testing.md`.
+Rebuild TDD logs and Chrome DevTools MCP browser evidence remain in `assets/screenshots/` and are documented in `docs/05-tdd-and-testing.md`.
 
 ## Engineering Workflow
 
