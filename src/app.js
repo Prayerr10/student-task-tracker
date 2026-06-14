@@ -1,6 +1,7 @@
 "use strict";
 
 let academicTasks = [];
+let activeFilter = "All";
 
 const academicTaskForm = document.querySelector("#academic-task-form");
 const titleInput = document.querySelector("#task-title");
@@ -10,6 +11,7 @@ const validationSummary = document.querySelector("#validation-summary");
 const taskList = document.querySelector("#task-list");
 const taskCount = document.querySelector("#task-count");
 const notification = document.querySelector("#notification");
+const filterButtons = [...document.querySelectorAll("[data-filter]")];
 let notificationTimeout;
 let notificationSequence = 0;
 const fieldControls = {
@@ -88,7 +90,8 @@ function createTaskCard(academicTask) {
     const updatedTask = academicTasks.find((task) => task.id === academicTask.id);
     renderAcademicTasks();
     announceStatusChange(updatedTask);
-    document.querySelector(`[data-task-id="${academicTask.id}"] .status-button`)?.focus();
+    const updatedStatusButton = document.querySelector(`[data-task-id="${academicTask.id}"] .status-button`);
+    (updatedStatusButton || document.querySelector(`[data-filter="${activeFilter}"]`))?.focus();
   });
 
   article.append(status, title, course, dueDate, statusButton);
@@ -97,7 +100,8 @@ function createTaskCard(academicTask) {
 
 function renderAcademicTasks() {
   taskList.replaceChildren();
-  taskCount.textContent = `${academicTasks.length} Academic ${academicTasks.length === 1 ? "Task" : "Tasks"}`;
+  const filteredTasks = AcademicTaskDomain.filterAcademicTasks(academicTasks, activeFilter);
+  taskCount.textContent = `${filteredTasks.length} Academic ${filteredTasks.length === 1 ? "Task" : "Tasks"}`;
 
   if (academicTasks.length === 0) {
     const emptyState = document.createElement("div");
@@ -114,10 +118,35 @@ function renderAcademicTasks() {
     return;
   }
 
-  AcademicTaskDomain.orderAcademicTasks(academicTasks).forEach((academicTask) => {
+  if (filteredTasks.length === 0) {
+    const emptyState = document.createElement("div");
+    emptyState.className = "empty-state";
+
+    const heading = document.createElement("h3");
+    heading.textContent = `No ${activeFilter} Academic Tasks`;
+
+    const message = document.createElement("p");
+    message.textContent = `No Academic Tasks match the ${activeFilter} filter.`;
+
+    emptyState.append(heading, message);
+    taskList.append(emptyState);
+    return;
+  }
+
+  AcademicTaskDomain.orderAcademicTasks(filteredTasks).forEach((academicTask) => {
     taskList.append(createTaskCard(academicTask));
   });
 }
+
+filterButtons.forEach((button) => {
+  button.addEventListener("click", () => {
+    activeFilter = button.dataset.filter;
+    filterButtons.forEach((filterButton) => {
+      filterButton.setAttribute("aria-pressed", String(filterButton === button));
+    });
+    renderAcademicTasks();
+  });
+});
 
 function announceSuccessfulCreation() {
   window.clearTimeout(notificationTimeout);

@@ -109,9 +109,22 @@
     ));
   }
 
+  function filterAcademicTasks(academicTasks, filter) {
+    if (filter === "All") {
+      return [...academicTasks];
+    }
+
+    if (filter === "Pending" || filter === "Completed") {
+      return academicTasks.filter((academicTask) => academicTask.status === filter);
+    }
+
+    return [];
+  }
+
   return {
     createAcademicTask,
     createValidationFeedback,
+    filterAcademicTasks,
     formatDueDate,
     isAcademicTaskOverdue,
     orderAcademicTasks,

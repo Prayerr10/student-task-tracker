@@ -1,6 +1,7 @@
 const {
   createAcademicTask,
   createValidationFeedback,
+  filterAcademicTasks,
   formatDueDate,
   isAcademicTaskOverdue,
   orderAcademicTasks,
@@ -257,5 +258,37 @@ describe("toggleAcademicTaskStatus", () => {
     expect(toggleAcademicTaskStatus([completed], "selected")).toEqual([
       { ...completed, status: "Pending" }
     ]);
+  });
+});
+
+describe("filterAcademicTasks", () => {
+  const pendingTask = {
+    id: "pending",
+    title: "Research outline",
+    course: "Software Engineering",
+    dueDate: "2026-06-20",
+    status: "Pending",
+    createdAt: "2026-06-15T09:00:00.000Z"
+  };
+  const completedTask = {
+    ...pendingTask,
+    id: "completed",
+    title: "Completed reading",
+    status: "Completed"
+  };
+
+  it("returns every Academic Task for the All filter without mutating the collection", () => {
+    const academicTasks = [pendingTask, completedTask];
+
+    expect(filterAcademicTasks(academicTasks, "All")).toEqual(academicTasks);
+    expect(academicTasks).toEqual([pendingTask, completedTask]);
+  });
+
+  it("returns Pending Academic Tasks for the Pending filter", () => {
+    expect(filterAcademicTasks([pendingTask, completedTask], "Pending")).toEqual([pendingTask]);
+  });
+
+  it("returns Completed Academic Tasks for the Completed filter", () => {
+    expect(filterAcademicTasks([pendingTask, completedTask], "Completed")).toEqual([completedTask]);
   });
 });
