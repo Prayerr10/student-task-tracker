@@ -32,7 +32,7 @@ The final automated test result is:
 
 ## 4. Evidence Paths
 
-Historical TDD evidence:
+Completed rebuild TDD evidence:
 
 - `assets/screenshots/rebuild-issue-11-red-required-fields.txt`
 - `assets/screenshots/rebuild-issue-11-red-invalid-date.txt`
@@ -43,7 +43,7 @@ Historical TDD evidence:
 - `assets/screenshots/rebuild-issue-13-green-pending-completed.txt`
 - `assets/screenshots/rebuild-issue-13-green-completed-pending.txt`
 
-Historical regression evidence:
+Completed rebuild regression evidence:
 
 - `assets/screenshots/rebuild-issue-21-red-impossible-date.txt`
 - `assets/screenshots/rebuild-issue-21-green-impossible-date.txt`

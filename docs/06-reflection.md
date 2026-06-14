@@ -18,7 +18,12 @@ AI implemented the browser app in plain HTML, CSS, and JavaScript and separated 
 
 ## 5. How was AI used during TDD and browser testing?
 
-I explicitly used the `$tdd` skill for the regression fix in Issue #27. The red-green loop was driven by public-interface tests, not implementation details. AI also operated Chrome DevTools MCP for browser testing, which verified final-task deletion, empty states, filters, focus handling, console cleanliness, localStorage behavior, refresh behavior, and 320px layout.
+The `$tdd` skill supported the completed RED-GREEN-REFACTOR cycles for Issues #11
+and #13 and the regression workflow for Issue #27. The cycles were driven by
+public-interface tests, not implementation details. AI also operated Chrome
+DevTools MCP for browser testing, which verified final-task deletion, empty
+states, filters, focus handling, console cleanliness, localStorage behavior,
+refresh behavior, and 320px layout.
 
 ## 6. Where did AI make mistakes or give weak suggestions?
 
@@ -42,8 +47,12 @@ With more time, I would add automated browser coverage for the full end-to-end u
 
 ## 10. Skills and workflow actually used
 
-- `$tdd` was used for the regression fix workflow.
-- The repository issue/PR workflow was used for issue-driven delivery.
+- `grill-with-docs` / `grill-me` clarified and challenged the product idea.
+- `to-prd` converted approved requirements into the PRD.
+- `to-issues` produced the seven approved vertical-slice issues.
+- `$tdd` supported Issues #11, #13, and regression Issue #27.
+- Chrome DevTools MCP was used by AI for browser verification.
+- The repository issue/branch/commit/PR workflow was used for delivery.
 - I did not use sub-agents in this delivery.
 
 ## 11. Defects discovered through review/testing

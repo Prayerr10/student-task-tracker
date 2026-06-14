@@ -269,5 +269,5 @@ The rebuild is successful when:
 ## 14. Open Questions
 
 There are no unresolved product-requirements questions. Visual design, module
-structure, technology details, test seams, and exact UI copy will be decided
-during their approved workflow stages.
+structure, technology details, test seams, and UI copy were finalized during
+their approved workflow stages.
