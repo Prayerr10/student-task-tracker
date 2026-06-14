@@ -113,6 +113,14 @@
     return academicTasks.filter((academicTask) => academicTask.id !== selectedId);
   }
 
+  function resolveFilterAfterDeletion(academicTasks, activeFilter) {
+    if (academicTasks.length === 0) {
+      return "All";
+    }
+
+    return activeFilter;
+  }
+
   function filterAcademicTasks(academicTasks, filter) {
     if (filter === "All") {
       return [...academicTasks];
@@ -133,6 +141,7 @@
     formatDueDate,
     isAcademicTaskOverdue,
     orderAcademicTasks,
+    resolveFilterAfterDeletion,
     toggleAcademicTaskStatus,
     validateAcademicTaskInput
   };
