@@ -1,0 +1,34 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : PASS tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (PASS tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (3 ms)
+    v allows duplicate Academic Tasks as separate entities (1 ms)
+    v does not mutate the existing Academic Task collection
+    v keeps submitted text as plain data
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input
+    v rejects a Task Title longer than 120 characters
+    v rejects a Course longer than 80 characters
+    v rejects an invalid Due Date
+    v rejects a past Due Date (1 ms)
+    v accepts today's Due Date
+  createValidationFeedback
+    v describes the first invalid field and an accessible validation summary
+
+Test Suites: 1 passed, 1 total
+Tests:       12 passed, 12 total
+Snapshots:   0 total
+Time:        0.34 s, estimated 1 s
+Ran all test suites.
+

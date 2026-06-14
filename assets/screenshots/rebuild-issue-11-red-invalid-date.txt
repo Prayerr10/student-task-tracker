@@ -1,0 +1,52 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : FAIL tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (3 ms)
+    v allows duplicate Academic Tasks as separate entities (1 ms)
+    v does not mutate the existing Academic Task collection
+    v keeps submitted text as plain data (1 ms)
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input (1 ms)
+    v rejects a Task Title longer than 120 characters
+    v rejects a Course longer than 80 characters
+    × rejects an invalid Due Date (3 ms)
+
+  ? validateAcademicTaskInput › rejects an invalid Due Date
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 1
+
+    - Object {
+    -   "dueDate": "Enter a valid Due Date.",
+    - }
+    + Object {}
+
+    [0m [90m 116 |[39m       course[33m:[39m [32m"Software Engineering"[39m[33m,[39m
+     [90m 117 |[39m       dueDate[33m:[39m [32m"not-a-date"[39m
+    [31m[1m>[22m[39m[90m 118 |[39m     }[33m,[39m [32m"2026-06-15"[39m))[33m.[39mtoEqual({
+     [90m     |[39m                       [31m[1m^[22m[39m
+     [90m 119 |[39m       dueDate[33m:[39m [32m"Enter a valid Due Date."[39m
+     [90m 120 |[39m     })[33m;[39m
+     [90m 121 |[39m   })[33m;[39m[0m
+
+      at Object.toEqual (tests/task.test.js:118:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 8 passed, 9 total
+Snapshots:   0 total
+Time:        0.379 s, estimated 1 s
+Ran all test suites.
+

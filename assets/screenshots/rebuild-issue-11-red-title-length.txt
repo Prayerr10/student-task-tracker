@@ -1,0 +1,50 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : FAIL tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (2 ms)
+    v allows duplicate Academic Tasks as separate entities (1 ms)
+    v does not mutate the existing Academic Task collection
+    v keeps submitted text as plain data
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation (1 ms)
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input
+    × rejects a Task Title longer than 120 characters (3 ms)
+
+  ? validateAcademicTaskInput › rejects a Task Title longer than 120 characters
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 1
+
+    - Object {
+    -   "title": "Task Title must be 120 characters or fewer.",
+    - }
+    + Object {}
+
+    [0m [90m  96 |[39m       course[33m:[39m [32m"Software Engineering"[39m[33m,[39m
+     [90m  97 |[39m       dueDate[33m:[39m [32m"2026-06-15"[39m
+    [31m[1m>[22m[39m[90m  98 |[39m     }))[33m.[39mtoEqual({
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m  99 |[39m       title[33m:[39m [32m"Task Title must be 120 characters or fewer."[39m
+     [90m 100 |[39m     })[33m;[39m
+     [90m 101 |[39m   })[33m;[39m[0m
+
+      at Object.toEqual (tests/task.test.js:98:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 6 passed, 7 total
+Snapshots:   0 total
+Time:        0.395 s, estimated 1 s
+Ran all test suites.
+

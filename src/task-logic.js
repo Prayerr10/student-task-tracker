@@ -1,69 +1,148 @@
-(function taskLogicModule(root, factory) {
-  const taskLogic = factory();
+(function academicTaskDomainModule(root, factory) {
+  const academicTaskDomain = factory();
 
   if (typeof module === "object" && module.exports) {
-    module.exports = taskLogic;
+    module.exports = academicTaskDomain;
   } else {
-    root.TaskLogic = taskLogic;
+    root.AcademicTaskDomain = academicTaskDomain;
   }
-}(typeof globalThis !== "undefined" ? globalThis : this, function createTaskLogic() {
+}(typeof globalThis !== "undefined" ? globalThis : this, function createAcademicTaskDomain() {
   "use strict";
 
-  function createTaskId() {
+  function createId() {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
       return crypto.randomUUID();
     }
 
-    return `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return `academic-task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
-  function addTask(tasks, title, subject, dueDate = "") {
-    const cleanTitle = String(title).trim();
-    const cleanSubject = String(subject).trim();
-    const cleanDueDate = String(dueDate).trim();
-
-    if (!cleanTitle || !cleanSubject) {
-      throw new Error("Task title and subject are required.");
+  function isValidCalendarDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return false;
     }
 
-    const task = {
-      id: createTaskId(),
-      title: cleanTitle,
-      subject: cleanSubject,
-      dueDate: cleanDueDate,
-      completed: false,
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return date.getUTCFullYear() === year
+      && date.getUTCMonth() === month - 1
+      && date.getUTCDate() === day;
+  }
+
+  function createAcademicTask(academicTasks, input) {
+    const academicTask = {
+      id: createId(),
+      title: input.title,
+      course: input.course,
+      dueDate: input.dueDate,
+      status: "Pending",
       createdAt: new Date().toISOString()
     };
 
-    return [task, ...tasks];
+    return [...academicTasks, academicTask];
   }
 
-  function deleteTask(tasks, id) {
-    return tasks.filter((task) => task.id !== id);
+  function validateAcademicTaskInput(input, today) {
+    const problems = {};
+
+    if (!String(input.title).trim()) {
+      problems.title = "Task Title is required.";
+    } else if (String(input.title).length > 120) {
+      problems.title = "Task Title must be 120 characters or fewer.";
+    }
+
+    if (!String(input.course).trim()) {
+      problems.course = "Course is required.";
+    } else if (String(input.course).length > 80) {
+      problems.course = "Course must be 80 characters or fewer.";
+    }
+
+    if (!String(input.dueDate).trim()) {
+      problems.dueDate = "Due Date is required.";
+    } else if (!isValidCalendarDate(String(input.dueDate))) {
+      problems.dueDate = "Enter a valid Due Date.";
+    } else if (today && input.dueDate < today) {
+      problems.dueDate = "Due Date cannot be in the past.";
+    }
+
+    return problems;
   }
 
-  function toggleComplete(tasks, id) {
-    return tasks.map((task) => (
-      task.id === id ? { ...task, completed: !task.completed } : task
+  function createValidationFeedback(problems) {
+    const invalidFields = Object.keys(problems);
+
+    return {
+      firstInvalidField: invalidFields[0],
+      summary: `Please correct ${invalidFields.length} ${invalidFields.length === 1 ? "field" : "fields"} before adding the Academic Task.`
+    };
+  }
+
+  function orderAcademicTasks(academicTasks) {
+    return [...academicTasks].sort((first, second) => (
+      first.dueDate.localeCompare(second.dueDate)
+      || first.createdAt.localeCompare(second.createdAt)
     ));
   }
 
-  function filterTasks(tasks, status) {
-    if (status === "active") {
-      return tasks.filter((task) => !task.completed);
+  function isAcademicTaskOverdue(academicTask, today) {
+    return academicTask.status === "Pending" && academicTask.dueDate < today;
+  }
+
+  function formatDueDate(dueDate) {
+    const [year, month, day] = dueDate.split("-").map(Number);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }).format(new Date(year, month - 1, day));
+  }
+
+  function toggleAcademicTaskStatus(academicTasks, selectedId) {
+    return academicTasks.map((academicTask) => (
+      academicTask.id === selectedId
+        ? {
+          ...academicTask,
+          status: academicTask.status === "Pending" ? "Completed" : "Pending"
+        }
+        : academicTask
+    ));
+  }
+
+  function deleteAcademicTask(academicTasks, selectedId) {
+    return academicTasks.filter((academicTask) => academicTask.id !== selectedId);
+  }
+
+  function resolveFilterAfterDeletion(academicTasks, activeFilter) {
+    if (academicTasks.length === 0) {
+      return "All";
     }
 
-    if (status === "completed") {
-      return tasks.filter((task) => task.completed);
+    return activeFilter;
+  }
+
+  function filterAcademicTasks(academicTasks, filter) {
+    if (filter === "All") {
+      return [...academicTasks];
     }
 
-    return [...tasks];
+    if (filter === "Pending" || filter === "Completed") {
+      return academicTasks.filter((academicTask) => academicTask.status === filter);
+    }
+
+    return [];
   }
 
   return {
-    addTask,
-    deleteTask,
-    toggleComplete,
-    filterTasks
+    createAcademicTask,
+    createValidationFeedback,
+    deleteAcademicTask,
+    filterAcademicTasks,
+    formatDueDate,
+    isAcademicTaskOverdue,
+    orderAcademicTasks,
+    resolveFilterAfterDeletion,
+    toggleAcademicTaskStatus,
+    validateAcademicTaskInput
   };
 }));

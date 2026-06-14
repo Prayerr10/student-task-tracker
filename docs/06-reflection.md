@@ -1,41 +1,55 @@
 # Reflection on AI-Assisted Development
 
-## 1. How did you use AI during requirements clarification?
+## 1. How was AI used during requirements clarification?
 
-I used Codex CLI to turn the initial Student Task Tracker idea into structured requirements covering the problem, target users, user goals, functional requirements, constraints, assumptions, and open questions. It helped identify details that were easy to overlook, such as empty states, invalid input, responsive behavior, and the risk of losing data when browser storage is cleared. I still had to decide which questions should remain open and keep the scope realistic for a two-day project.
+AI helped turn the project idea into a sharper set of requirements by surfacing the behaviors that needed explicit treatment: empty states, filters, deletion flow, duplicate tasks, overdue logic, persistence, and responsive layout. It was useful for enumerating edge cases, but human approval was still needed to decide what should remain in scope and what should be deferred.
 
-## 2. How did you use AI during PRD creation?
+## 2. How was AI used during PRD creation?
 
-I used Codex CLI to convert the clarified requirements into a concise PRD with goals, non-goals, user stories, five core features, and acceptance criteria. It did well at translating broad requirements into behavior that could be tested, such as requiring completed tasks to remain completed after refresh. I reviewed the result to ensure advanced features such as accounts, notifications, editing, and cloud synchronization stayed out of scope.
+AI helped translate clarified requirements into a PRD with concrete acceptance criteria and vertical slices. It was effective at turning vague goals into testable behavior, but the final scope still had to be checked by a human so the project stayed realistic and did not drift into accounts, cloud sync, or editing features.
 
-## 3. How did you use AI during issue breakdown?
+## 3. How was AI used during issue breakdown?
 
-Codex CLI broke the PRD into six vertical-slice issues based on user-visible behavior instead of technical layers. It added acceptance criteria, dependencies, testing notes, and AFK or HITL classifications for each issue. Human judgment was needed for the HITL filter issue, where I accepted three visible filter buttons as the UI pattern.
+AI broke the PRD into independently grabbable issues that matched user-visible slices instead of internal modules. That made the work easier to sequence and review. The project followed the repository workflow around issue tracking and approval gates, and the resulting issue titles are reflected in the GitHub issue history.
 
-## 4. How did you use AI during coding?
+## 4. How was AI used during design and coding?
 
-I used Codex CLI to create the semantic HTML, responsive CSS, and vanilla JavaScript implementation for adding, viewing, completing, deleting, filtering, and persisting tasks. It also separated the core task operations into `src/task-logic.js` so the same logic could be used by the browser app and imported by Jest. I reviewed the code structure and accepted the trade-off of a small shared module instead of adding a framework or build system.
+AI implemented the browser app in plain HTML, CSS, and JavaScript and separated the core task behavior into `src/task-logic.js`. That kept the app small and testable. I accepted the design direction of native controls, including the segmented filter buttons and accessible confirmation dialog, because they fit the problem and kept the implementation simple.
 
-## 5. How did you use AI during testing?
+## 5. How was AI used during TDD and browser testing?
 
-Codex CLI created Jest tests for `addTask`, `deleteTask`, `toggleComplete`, and `filterTasks`, then installed Jest and ran the suite. It verified that all seven automated tests passed and documented the TDD cycle, coverage, and browser checklist. It also performed a headless mobile render at 375px, but the full automated browser interaction test could not be completed because the browser integration and DevTools connection were unavailable.
+I explicitly used the `$tdd` skill for the regression fix in Issue #27. The red-green loop was driven by public-interface tests, not implementation details. AI also operated Chrome DevTools MCP for browser testing, which verified final-task deletion, empty states, filters, focus handling, console cleanliness, localStorage behavior, refresh behavior, and 320px layout.
 
 ## 6. Where did AI make mistakes or give weak suggestions?
 
-Codex CLI initially produced a CSS container width expression without `calc()`, which caused horizontal overflow in the 375px headless render. It detected and corrected that issue after visual verification, but the first implementation shows why generated UI code still needs inspection. There was also an inconsistency between the earlier requirement that due date was required and the later coding instruction that it was optional; Codex followed the latest instruction, but this decision required human awareness.
+One weak suggestion was to preserve the active filter after deleting the final task. That would have kept the app on a filtered empty state, which conflicted with the approved behavior. The fix introduced a small state-normalization helper so the app returns to `All` only when the task list becomes empty.
 
-## 7. What did you verify manually?
+Earlier in the project, browser-facing code also needed human review to make sure the UI language stayed consistent and that accessible states were not inferred from color alone. The final app is better because those assumptions were checked instead of accepted blindly.
 
-I manually verified the main browser workflow in Chrome by adding a task, refreshing the page, marking a task as completed, deleting a task, and using the All, Active, and Completed filters. I also checked Chrome DevTools Console and confirmed that no unexpected errors appeared during the main workflow.
+## 7. What did a human verify manually?
 
-I verified localStorage manually by checking that the `student-tasks` key was created and that task data remained after refreshing the page. I also tested the layout at a 375px mobile viewport and confirmed that the form, filter buttons, and task cards remained usable.
+A human approved the HITL design for the segmented filter buttons and the accessible native delete dialog. A human also approved the defect reported for Issue #27 and the decision to treat it as a regression that required a GitHub issue before fixing it.
 
-## 8. What software engineering decision are you most confident about?
+I am not claiming the browser actions were performed manually by a human. The browser verification in this delivery was executed by AI through Chrome DevTools MCP.
 
-I am most confident about separating pure task logic from DOM, rendering, and storage concerns. The functions in `src/task-logic.js` accept data and return new task arrays, which makes their behavior easy to understand and test without a browser. This kept the implementation small while improving testability and reducing the risk of UI code hiding logic errors.
+## 8. What software engineering decision am I most confident about?
 
-## 9. What would you improve with more time?
+The strongest decision was to keep task behavior in a small pure module and let the browser code handle rendering and interaction. That separation made the tests stable, kept the app easy to reason about, and made later regressions like Issue #27 easier to isolate and fix.
 
-With more time, I would add automated browser tests for the complete user workflow, including task creation, completion, deletion, filtering, and localStorage persistence. I would also improve accessibility, add clearer validation messages, and test the layout across more browsers and screen sizes.
+## 9. What would I improve with more time?
 
-I would also consider adding optional features such as editing existing tasks, sorting tasks by due date, and exporting tasks. These features were not included in the current version because the project needed to stay small and practical for a two-day software engineering assignment.
+With more time, I would add automated browser coverage for the full end-to-end user flows so more of the UI behavior is checked without manual browser work. I would also expand the documentation around storage recovery and add more explicit patterns for future regressions.
+
+## 10. Skills and workflow actually used
+
+- `$tdd` was used for the regression fix workflow.
+- The repository issue/PR workflow was used for issue-driven delivery.
+- I did not use sub-agents in this delivery.
+
+## 11. Defects discovered through review/testing
+
+- Issue #18: Ensure repeated Academic Task creation announcements are accessible.
+- Issue #21: Reject impossible calendar Due Dates.
+- Issue #27: Show initial empty state after deleting the final Academic Task.
+
+These defects were not hypothetical; they came from review or testing and were recorded as GitHub issues and regression evidence.
