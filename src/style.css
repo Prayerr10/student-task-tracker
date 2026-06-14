@@ -10,6 +10,9 @@
   --color-focus: #0b6ef3;
   --color-pending: #854d0e;
   --color-pending-bg: #fef3c7;
+  --color-danger: #b42318;
+  --color-danger-dark: #7a271a;
+  --color-danger-bg: #fef3f2;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -343,9 +346,9 @@ form {
 
 .delete-button {
   width: fit-content;
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-danger);
   color: var(--color-danger);
-  background: var(--color-surface);
+  background: var(--color-danger-bg);
 }
 
 .delete-button:hover {
