@@ -65,9 +65,32 @@
     };
   }
 
+  function orderAcademicTasks(academicTasks) {
+    return [...academicTasks].sort((first, second) => (
+      first.dueDate.localeCompare(second.dueDate)
+      || first.createdAt.localeCompare(second.createdAt)
+    ));
+  }
+
+  function isAcademicTaskOverdue(academicTask, today) {
+    return academicTask.status === "Pending" && academicTask.dueDate < today;
+  }
+
+  function formatDueDate(dueDate) {
+    const [year, month, day] = dueDate.split("-").map(Number);
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric"
+    }).format(new Date(year, month - 1, day));
+  }
+
   return {
     createAcademicTask,
     createValidationFeedback,
+    formatDueDate,
+    isAcademicTaskOverdue,
+    orderAcademicTasks,
     validateAcademicTaskInput
   };
 }));

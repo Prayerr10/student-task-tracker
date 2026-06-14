@@ -258,6 +258,11 @@ form {
   font-weight: 700;
 }
 
+.overdue-badge {
+  color: #b42318;
+  font-weight: 700;
+}
+
 .task-course,
 .task-due-date {
   overflow-wrap: anywhere;

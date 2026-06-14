@@ -1,6 +1,9 @@
 const {
   createAcademicTask,
   createValidationFeedback,
+  formatDueDate,
+  isAcademicTaskOverdue,
+  orderAcademicTasks,
   validateAcademicTaskInput
 } = require("../src/task-logic");
 const { createSuccessfulCreationAnnouncement } = require("../src/notification-logic");
@@ -161,5 +164,53 @@ describe("createValidationFeedback", () => {
       firstInvalidField: "dueDate",
       summary: "Please correct 1 field before adding the Academic Task."
     });
+  });
+});
+
+describe("Academic Task list behavior", () => {
+  const laterTask = {
+    id: "later",
+    title: "Later task",
+    course: "Course",
+    dueDate: "2026-06-20",
+    status: "Pending",
+    createdAt: "2026-06-15T10:00:00.000Z"
+  };
+  const earlierCreatedTask = {
+    ...laterTask,
+    id: "earlier-created",
+    title: "Earlier created",
+    createdAt: "2026-06-15T09:00:00.000Z"
+  };
+  const earliestDueTask = {
+    ...laterTask,
+    id: "earliest-due",
+    title: "Earliest due",
+    dueDate: "2026-06-18"
+  };
+
+  it("orders Academic Tasks by Due Date then creation time", () => {
+    expect(orderAcademicTasks([laterTask, earlierCreatedTask, earliestDueTask]).map((task) => task.id))
+      .toEqual(["earliest-due", "earlier-created", "later"]);
+  });
+
+  it("derives Overdue only for Pending Academic Tasks before today", () => {
+    expect(isAcademicTaskOverdue({ ...laterTask, dueDate: "2026-06-14" }, "2026-06-15")).toBe(true);
+    expect(isAcademicTaskOverdue({ ...laterTask, dueDate: "2026-06-15" }, "2026-06-15")).toBe(false);
+    expect(isAcademicTaskOverdue({
+      ...laterTask,
+      dueDate: "2026-06-14",
+      status: "Completed"
+    }, "2026-06-15")).toBe(false);
+  });
+
+  it("formats Due Date using an unambiguous English format", () => {
+    expect(formatDueDate("2026-06-20")).toBe("Jun 20, 2026");
+  });
+
+  it("does not mutate the source collection while ordering", () => {
+    const source = [laterTask, earliestDueTask];
+    orderAcademicTasks(source);
+    expect(source.map((task) => task.id)).toEqual(["later", "earliest-due"]);
   });
 });
