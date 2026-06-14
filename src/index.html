@@ -3,7 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A simple offline task tracker for students.">
+  <meta
+    name="description"
+    content="A focused academic productivity dashboard for tracking Academic Tasks."
+  >
   <title>Student Task Tracker</title>
   <link rel="stylesheet" href="style.css">
   <script src="task-logic.js" defer></script>
@@ -11,59 +14,54 @@
 </head>
 <body>
   <header class="site-header">
-    <div class="container">
-      <p class="eyebrow">Plan your study</p>
+    <div class="container header-content">
+      <p class="eyebrow">Academic productivity</p>
       <h1>Student Task Tracker</h1>
-      <p>Keep assignments and study tasks organized in one place.</p>
+      <p class="header-summary">Keep the work for every Course clear and in one place.</p>
     </div>
   </header>
 
   <main class="container app-layout">
-    <section class="panel" aria-labelledby="add-task-heading">
-      <h2 id="add-task-heading">Add a task</h2>
+    <section class="panel form-panel" aria-labelledby="add-academic-task-heading">
+      <div class="section-heading">
+        <p class="eyebrow">New Academic Task</p>
+        <h2 id="add-academic-task-heading">Add an Academic Task</h2>
+        <p>Record the work you need to complete.</p>
+      </div>
 
-      <form id="task-form">
+      <form id="academic-task-form">
         <div class="form-field">
-          <label for="task-title">Task title</label>
+          <label for="task-title">Task Title</label>
           <input id="task-title" name="title" type="text" maxlength="120" required>
         </div>
 
         <div class="form-field">
-          <label for="task-subject">Subject</label>
-          <input id="task-subject" name="subject" type="text" maxlength="80" required>
+          <label for="task-course">Course</label>
+          <input id="task-course" name="course" type="text" maxlength="80" required>
         </div>
 
         <div class="form-field">
-          <label for="task-due-date">Due date <span>(optional)</span></label>
-          <input id="task-due-date" name="dueDate" type="date">
+          <label for="task-due-date">Due Date</label>
+          <input id="task-due-date" name="dueDate" type="date" required>
         </div>
 
-        <p id="form-message" class="form-message" role="alert" aria-live="polite"></p>
-        <button class="primary-button" type="submit">Add Task</button>
+        <button class="primary-button" type="submit">Add Academic Task</button>
       </form>
     </section>
 
-    <section class="tasks-section" aria-labelledby="tasks-heading">
+    <section class="panel task-panel" aria-labelledby="academic-tasks-heading">
       <div class="tasks-heading-row">
-        <div>
+        <div class="section-heading">
           <p class="eyebrow">Your workload</p>
-          <h2 id="tasks-heading">Tasks</h2>
+          <h2 id="academic-tasks-heading">Academic Tasks</h2>
         </div>
-        <span id="task-count" class="task-count" aria-live="polite">0 tasks</span>
+        <span id="task-count" class="task-count">0 Academic Tasks</span>
       </div>
 
-      <nav class="filter-bar" aria-label="Filter tasks">
-        <button class="filter-button active" type="button" data-filter="all" aria-pressed="true">All</button>
-        <button class="filter-button" type="button" data-filter="active" aria-pressed="false">Active</button>
-        <button class="filter-button" type="button" data-filter="completed" aria-pressed="false">Completed</button>
-      </nav>
-
-      <div id="task-list" class="task-list" aria-live="polite"></div>
+      <div id="task-list" class="task-list"></div>
     </section>
   </main>
 
-  <footer class="site-footer">
-    <div class="container">Tasks are saved locally in this browser.</div>
-  </footer>
+  <div id="notification" class="notification" role="status" aria-live="polite"></div>
 </body>
 </html>

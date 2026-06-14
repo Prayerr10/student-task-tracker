@@ -1,89 +1,64 @@
-const {
-  addTask,
-  deleteTask,
-  toggleComplete,
-  filterTasks
-} = require("../src/task-logic");
+const { createAcademicTask } = require("../src/task-logic");
 
-const activeTask = {
-  id: "task-active",
-  title: "Write report",
-  subject: "Software Engineering",
-  dueDate: "2026-06-20",
-  completed: false,
-  createdAt: "2026-06-11T09:00:00.000Z"
-};
+describe("createAcademicTask", () => {
+  it("creates one separate Pending Academic Task with the submitted values", () => {
+    const result = createAcademicTask([], {
+      title: "Write research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-20"
+    });
 
-const completedTask = {
-  id: "task-completed",
-  title: "Review notes",
-  subject: "Algorithms",
-  dueDate: "",
-  completed: true,
-  createdAt: "2026-06-10T09:00:00.000Z"
-};
-
-// RED: task creation did not exist outside DOM code.
-// GREEN: addTask returns a new list containing a complete Task object.
-describe("addTask", () => {
-  it("creates a task with the correct fields and completed set to false", () => {
-    const result = addTask([], "Write essay", "English", "2026-06-20");
-    const task = result[0];
-
-    expect(task).toEqual(expect.objectContaining({
-      title: "Write essay",
-      subject: "English",
+    expect(result).toHaveLength(1);
+    expect(result[0]).toEqual(expect.objectContaining({
+      title: "Write research outline",
+      course: "Software Engineering",
       dueDate: "2026-06-20",
-      completed: false
+      status: "Pending"
     }));
-    expect(task.id).toEqual(expect.any(String));
-    expect(task.createdAt).toEqual(expect.any(String));
+    expect(result[0].id).toEqual(expect.any(String));
+    expect(result[0].createdAt).toEqual(expect.any(String));
   });
 
-  it("generates a unique id for each new task", () => {
-    const firstTask = addTask([], "First task", "Math")[0];
-    const secondTask = addTask([], "Second task", "Science")[0];
+  it("allows duplicate Academic Tasks as separate entities", () => {
+    const input = {
+      title: "Review lecture notes",
+      course: "Algorithms",
+      dueDate: "2026-06-21"
+    };
 
-    expect(firstTask.id).not.toBe(secondTask.id);
-  });
-});
+    const firstResult = createAcademicTask([], input);
+    const secondResult = createAcademicTask(firstResult, input);
 
-// RED: deletion depended on shared browser state.
-// GREEN: deleteTask returns a new list without only the matching task.
-describe("deleteTask", () => {
-  it("removes the task with the matching id without removing others", () => {
-    const result = deleteTask([activeTask, completedTask], activeTask.id);
-
-    expect(result).toEqual([completedTask]);
-  });
-});
-
-// RED: completion toggling depended on shared browser state.
-// GREEN: toggleComplete returns a new list with the matching status flipped.
-describe("toggleComplete", () => {
-  it("flips completed from false to true and back", () => {
-    const completed = toggleComplete([activeTask], activeTask.id);
-    const activeAgain = toggleComplete(completed, activeTask.id);
-
-    expect(completed[0].completed).toBe(true);
-    expect(activeAgain[0].completed).toBe(false);
-  });
-});
-
-// RED: filtering could not be called without loading the DOM application.
-// GREEN: filterTasks returns tasks matching the requested status.
-describe("filterTasks", () => {
-  const tasks = [activeTask, completedTask];
-
-  it('returns only incomplete tasks for "active"', () => {
-    expect(filterTasks(tasks, "active")).toEqual([activeTask]);
+    expect(secondResult).toHaveLength(2);
+    expect(secondResult[0]).not.toBe(secondResult[1]);
+    expect(secondResult[0].id).not.toBe(secondResult[1].id);
+    expect(secondResult[0]).toEqual(expect.objectContaining(input));
+    expect(secondResult[1]).toEqual(expect.objectContaining(input));
   });
 
-  it('returns only completed tasks for "completed"', () => {
-    expect(filterTasks(tasks, "completed")).toEqual([completedTask]);
+  it("does not mutate the existing Academic Task collection", () => {
+    const existingAcademicTasks = Object.freeze([]);
+
+    const result = createAcademicTask(existingAcademicTasks, {
+      title: "Prepare presentation",
+      course: "Communication",
+      dueDate: "2026-06-22"
+    });
+
+    expect(existingAcademicTasks).toHaveLength(0);
+    expect(result).toHaveLength(1);
   });
 
-  it('returns all tasks for "all"', () => {
-    expect(filterTasks(tasks, "all")).toEqual(tasks);
+  it("keeps submitted text as plain data", () => {
+    const submittedTitle = "<img src=x onerror=alert('unsafe')>";
+
+    const result = createAcademicTask([], {
+      title: submittedTitle,
+      course: "<script>unsafe</script>",
+      dueDate: "2026-06-23"
+    });
+
+    expect(result[0].title).toBe(submittedTitle);
+    expect(result[0].course).toBe("<script>unsafe</script>");
   });
 });
