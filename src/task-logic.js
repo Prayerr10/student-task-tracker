@@ -30,7 +30,44 @@
     return [...academicTasks, academicTask];
   }
 
+  function validateAcademicTaskInput(input, today) {
+    const problems = {};
+
+    if (!String(input.title).trim()) {
+      problems.title = "Task Title is required.";
+    } else if (String(input.title).length > 120) {
+      problems.title = "Task Title must be 120 characters or fewer.";
+    }
+
+    if (!String(input.course).trim()) {
+      problems.course = "Course is required.";
+    } else if (String(input.course).length > 80) {
+      problems.course = "Course must be 80 characters or fewer.";
+    }
+
+    if (!String(input.dueDate).trim()) {
+      problems.dueDate = "Due Date is required.";
+    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.dueDate))) {
+      problems.dueDate = "Enter a valid Due Date.";
+    } else if (today && input.dueDate < today) {
+      problems.dueDate = "Due Date cannot be in the past.";
+    }
+
+    return problems;
+  }
+
+  function createValidationFeedback(problems) {
+    const invalidFields = Object.keys(problems);
+
+    return {
+      firstInvalidField: invalidFields[0],
+      summary: `Please correct ${invalidFields.length} ${invalidFields.length === 1 ? "field" : "fields"} before adding the Academic Task.`
+    };
+  }
+
   return {
-    createAcademicTask
+    createAcademicTask,
+    createValidationFeedback,
+    validateAcademicTaskInput
   };
 }));

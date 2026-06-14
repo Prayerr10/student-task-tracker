@@ -173,6 +173,24 @@ form {
   border-color: var(--color-primary);
 }
 
+.form-field input[aria-invalid="true"] {
+  border-color: #b42318;
+}
+
+.field-error,
+.validation-summary {
+  margin: 0;
+  color: #b42318;
+  font-size: 0.875rem;
+  font-weight: 550;
+  line-height: 1.45;
+}
+
+.field-error:empty,
+.validation-summary:empty {
+  display: none;
+}
+
 .primary-button {
   min-height: 2.75rem;
   padding: var(--space-3) var(--space-4);

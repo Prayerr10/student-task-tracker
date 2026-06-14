@@ -1,0 +1,53 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : FAIL tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (3 ms)
+    v allows duplicate Academic Tasks as separate entities (1 ms)
+    v does not mutate the existing Academic Task collection (1 ms)
+    v keeps submitted text as plain data
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input
+    v rejects a Task Title longer than 120 characters (1 ms)
+    v rejects a Course longer than 80 characters
+    v rejects an invalid Due Date
+    × rejects a past Due Date (3 ms)
+
+  ? validateAcademicTaskInput › rejects a past Due Date
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 3
+    + Received  + 1
+
+    - Object {
+    -   "dueDate": "Due Date cannot be in the past.",
+    - }
+    + Object {}
+
+    [0m [90m 126 |[39m       course[33m:[39m [32m"Software Engineering"[39m[33m,[39m
+     [90m 127 |[39m       dueDate[33m:[39m [32m"2026-06-14"[39m
+    [31m[1m>[22m[39m[90m 128 |[39m     }[33m,[39m [32m"2026-06-15"[39m))[33m.[39mtoEqual({
+     [90m     |[39m                       [31m[1m^[22m[39m
+     [90m 129 |[39m       dueDate[33m:[39m [32m"Due Date cannot be in the past."[39m
+     [90m 130 |[39m     })[33m;[39m
+     [90m 131 |[39m   })[33m;[39m[0m
+
+      at Object.toEqual (tests/task.test.js:128:23)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 9 passed, 10 total
+Snapshots:   0 total
+Time:        0.365 s, estimated 1 s
+Ran all test suites.
+
