@@ -1,15 +1,16 @@
 # Student Task Tracker Vertical-Slice Issues
 
 These seven approved vertical-slice issues were published to GitHub in dependency
-order. GitHub Issues are the authoritative implementation tracker.
+order and completed during the rebuild. GitHub Issues remain the authoritative
+implementation record.
 
 ## Dependency Order
 
 ```text
 #10 Student can add an Academic Task
-|-- #11 Student receives actionable validation feedback [Planned TDD]
+|-- #11 Student receives actionable validation feedback [TDD completed]
 |-- #12 Student can view ordered and Overdue Academic Tasks
-|   |-- #13 Student can change Academic Task status [Planned TDD]
+|   |-- #13 Student can change Academic Task status [TDD completed]
 |   |   |-- #14 Student can filter Academic Tasks by status [HITL]
 |   |   `-- #16 Student retains Academic Tasks across browser sessions
 |   `-- #15 Student can safely delete an Academic Task
@@ -21,6 +22,7 @@ order. GitHub Issues are the authoritative implementation tracker.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/10
 **Label:** `ready-for-agent`
+**Status:** Closed/completed
 
 ### Type
 
@@ -40,12 +42,12 @@ feedback.
 
 ### Acceptance criteria
 
-- [ ] Required Task Title, Course, and Due Date controls have visible labels.
-- [ ] Valid submission creates one Pending Academic Task displaying the submitted values.
-- [ ] Duplicate valid submissions create separate Academic Tasks.
-- [ ] Submitted text is displayed as plain text and never executes as HTML or script.
-- [ ] Successful creation provides brief accessible feedback.
-- [ ] Initial empty state prompts the Student to add the first Academic Task.
+- [x] Required Task Title, Course, and Due Date controls have visible labels.
+- [x] Valid submission creates one Pending Academic Task displaying the submitted values.
+- [x] Duplicate valid submissions create separate Academic Tasks.
+- [x] Submitted text is displayed as plain text and never executes as HTML or script.
+- [x] Successful creation provides brief accessible feedback.
+- [x] Initial empty state prompts the Student to add the first Academic Task.
 
 ### Blocked by
 
@@ -68,7 +70,8 @@ displayed values, feedback clarity, and security behavior.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/11
 **Label:** `ready-for-agent`
-**Planned TDD:** Yes
+**TDD completed:** Yes
+**Status:** Closed/completed
 
 ### Type
 
@@ -87,12 +90,12 @@ showing field-specific messages, and focusing the first invalid field.
 
 ### Acceptance criteria
 
-- [ ] Empty and whitespace-only Task Title or Course values are rejected.
-- [ ] Task Title over 120 characters and Course over 80 characters are rejected.
-- [ ] Missing and past Due Dates are rejected; today's Due Date is accepted.
-- [ ] Invalid values are preserved and specific messages appear near affected fields.
-- [ ] Focus moves to the first invalid field.
-- [ ] Corrected valid submission clears validation messages and creates the Academic Task.
+- [x] Empty and whitespace-only Task Title or Course values are rejected.
+- [x] Task Title over 120 characters and Course over 80 characters are rejected.
+- [x] Missing and past Due Dates are rejected; today's Due Date is accepted.
+- [x] Invalid values are preserved and specific messages appear near affected fields.
+- [x] Focus moves to the first invalid field.
+- [x] Corrected valid submission clears validation messages and creates the Academic Task.
 
 ### Blocked by
 
@@ -107,10 +110,11 @@ controlled local date.
 Browser verification: every invalid case, today and past dates, keyboard focus,
 and console check.
 
-### Planned TDD
+### TDD Result
 
-This issue is selected for a genuine RED-GREEN-REFACTOR cycle using approved
-public test seams.
+This issue was completed using genuine RED-GREEN-REFACTOR cycles through
+approved public test seams. Evidence is documented in
+`docs/05-tdd-and-testing.md`.
 
 ### AI usage notes
 
@@ -121,6 +125,7 @@ clarity, focus behavior, and local-date expectations.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/12
 **Label:** `ready-for-agent`
+**Status:** Closed/completed
 
 ### Type
 
@@ -140,12 +145,12 @@ Overdue indication, and appropriate empty states.
 
 ### Acceptance criteria
 
-- [ ] Each Academic Task displays Task Title, Course, formatted Due Date, and status.
-- [ ] Earlier Due Dates appear first; equal Due Dates use earliest creation order.
-- [ ] Pending Academic Tasks past their Due Date display visible-text Overdue.
-- [ ] Academic Tasks due today and Completed Academic Tasks do not display Overdue.
-- [ ] Status and Overdue are not communicated using color alone.
-- [ ] The list remains usable with 100 Academic Tasks and at a 320px viewport.
+- [x] Each Academic Task displays Task Title, Course, formatted Due Date, and status.
+- [x] Earlier Due Dates appear first; equal Due Dates use earliest creation order.
+- [x] Pending Academic Tasks past their Due Date display visible-text Overdue.
+- [x] Academic Tasks due today and Completed Academic Tasks do not display Overdue.
+- [x] Status and Overdue are not communicated using color alone.
+- [x] The list remains usable with 100 Academic Tasks and at a 320px viewport.
 
 ### Blocked by
 
@@ -168,7 +173,8 @@ verify readability, Overdue clarity, and responsive usability.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/13
 **Label:** `ready-for-agent`
-**Planned TDD:** Yes
+**TDD completed:** Yes
+**Status:** Closed/completed
 
 ### Type
 
@@ -188,12 +194,12 @@ preserving its details and communicating the result accessibly.
 
 ### Acceptance criteria
 
-- [ ] A Pending Academic Task can become Completed.
-- [ ] A Completed Academic Task can return to Pending.
-- [ ] Only the selected Academic Task changes.
-- [ ] Completed Academic Tasks do not display Overdue.
-- [ ] Reopened Pending Academic Tasks display Overdue when their Due Date has passed.
-- [ ] Status changes provide brief accessible feedback.
+- [x] A Pending Academic Task can become Completed.
+- [x] A Completed Academic Task can return to Pending.
+- [x] Only the selected Academic Task changes.
+- [x] Completed Academic Tasks do not display Overdue.
+- [x] Reopened Pending Academic Tasks display Overdue when their Due Date has passed.
+- [x] Status changes provide brief accessible feedback.
 
 ### Blocked by
 
@@ -207,10 +213,11 @@ interface for deterministic status and Overdue transitions.
 Browser verification: both transitions, only selected task changes, reopened
 Overdue task, accessible feedback, and console check.
 
-### Planned TDD
+### TDD Result
 
-This issue is selected for a genuine RED-GREEN-REFACTOR cycle using approved
-public test seams.
+This issue was completed using genuine RED-GREEN-REFACTOR cycles through
+approved public test seams. Evidence is documented in
+`docs/05-tdd-and-testing.md`.
 
 ### AI usage notes
 
@@ -221,6 +228,7 @@ control clarity and accessible feedback.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/14
 **Label:** `ready-for-human`
+**Status:** Closed/completed
 
 ### Type
 
@@ -240,13 +248,13 @@ empty results.
 
 ### Acceptance criteria
 
-- [ ] A human approves the accessible filter interaction pattern before coding.
-- [ ] All displays every Academic Task.
-- [ ] Pending includes Pending and Overdue Academic Tasks.
-- [ ] Completed displays only Completed Academic Tasks.
-- [ ] All is selected after opening or refreshing the application.
-- [ ] Filtered empty states explain that no Academic Tasks match.
-- [ ] A status-changed Academic Task immediately disappears when it no longer matches, with accessible feedback.
+- [x] A human approves the accessible filter interaction pattern before coding.
+- [x] All displays every Academic Task.
+- [x] Pending includes Pending and Overdue Academic Tasks.
+- [x] Completed displays only Completed Academic Tasks.
+- [x] All is selected after opening or refreshing the application.
+- [x] Filtered empty states explain that no Academic Tasks match.
+- [x] A status-changed Academic Task immediately disappears when it no longer matches, with accessible feedback.
 
 ### Blocked by
 
@@ -270,6 +278,7 @@ the pattern and mobile presentation before implementation.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/15
 **Label:** `ready-for-agent`
+**Status:** Closed/completed
 
 ### Type
 
@@ -288,12 +297,12 @@ cancel safely, or permanently delete only the selected Academic Task.
 
 ### Acceptance criteria
 
-- [ ] Deletion opens a dialog identifying the Academic Task by Task Title.
-- [ ] Cancel and Escape preserve the Academic Task.
-- [ ] Focus moves into the dialog and returns to the originating control after cancellation.
-- [ ] Confirmation deletes only the selected Academic Task.
-- [ ] Successful deletion provides brief accessible feedback.
-- [ ] Deleting the final Academic Task displays the initial empty state.
+- [x] Deletion opens a dialog identifying the Academic Task by Task Title.
+- [x] Cancel and Escape preserve the Academic Task.
+- [x] Focus moves into the dialog and returns to the originating control after cancellation.
+- [x] Confirmation deletes only the selected Academic Task.
+- [x] Successful deletion provides brief accessible feedback.
+- [x] Deleting the final Academic Task displays the initial empty state.
 
 ### Blocked by
 
@@ -315,6 +324,7 @@ management, dialog wording, and accidental-deletion protection.
 
 **GitHub:** https://github.com/Prayerr10/student-task-tracker/issues/16
 **Label:** `ready-for-agent`
+**Status:** Closed/completed
 
 ### Type
 
@@ -333,12 +343,12 @@ warn about recovery or save failures, and keep core behavior available offline.
 
 ### Acceptance criteria
 
-- [ ] Added, status-changed, and deleted Academic Tasks retain the correct state after refresh.
-- [ ] The selected filter resets to All after refresh.
-- [ ] Entirely invalid stored data is ignored and produces a clear warning.
-- [ ] Partially invalid stored data restores valid Academic Tasks and produces a partial-recovery warning.
-- [ ] Save failure leaves the current session usable and warns that changes may be lost.
-- [ ] Core features remain usable offline after application files are available.
+- [x] Added, status-changed, and deleted Academic Tasks retain the correct state after refresh.
+- [x] The selected filter resets to All after refresh.
+- [x] Entirely invalid stored data is ignored and produces a clear warning.
+- [x] Partially invalid stored data restores valid Academic Tasks and produces a partial-recovery warning.
+- [x] Save failure leaves the current session usable and warns that changes may be lost.
+- [x] Core features remain usable offline after application files are available.
 
 ### Blocked by
 

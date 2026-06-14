@@ -254,7 +254,7 @@ The following decisions come directly from approved requirements:
 - Student-provided text is handled as plain text.
 - UI language is English only.
 - Exact visual design, module boundaries, technology libraries, and internal
-  representation remain design-stage decisions requiring human approval.
+  representation were finalized through the approved design and implementation.
 
 ## 12. Testing Decisions
 
@@ -277,11 +277,9 @@ Approved test seams:
   implementation-specific call sequences.
 - Apply genuine RED, GREEN, and REFACTOR cycles to at least two approved
   vertical-slice issues.
-- Existing historical tests and evidence may inform planning but do not count as
-  rebuild evidence.
-
-Final test tooling and the exact public domain-behavior interface require human
-approval during design.
+Final test tooling and the public domain-behavior interface were approved during
+design and are documented in `docs/04-design.md` and
+`docs/05-tdd-and-testing.md`.
 
 ## 13. Risks
 
@@ -321,8 +319,6 @@ approval during design.
 
 - The approved requirements in `docs/01-requirements.md` are authoritative.
 - `CONTEXT.md` defines the canonical domain terminology.
-- Existing implementation, tests, PRD, design, screenshots, and evidence are
-  historical references only.
-- The approved PRD must be stored in `docs/02-prd.md`.
-- Publishing the PRD as a GitHub Issue requires separate human approval.
+- The approved PRD is stored in `docs/02-prd.md`.
+- The PRD was converted into the approved GitHub vertical-slice Issues #10-#16.
 - No unresolved product-requirements questions remain.

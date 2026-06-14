@@ -2,8 +2,9 @@
 
 ## 1. Design Status
 
-- Status: Approved by the human reviewer
-- Integration branch: `development`
+- Status: Approved, implemented, and verified
+- Delivery branch: `main`
+- Integration branch: `development` (merged into `main`)
 - Approved requirements: `docs/01-requirements.md`
 - Approved PRD: `docs/02-prd.md`
 - Approved vertical slices: GitHub Issues #10-#16
@@ -14,7 +15,7 @@ PRD, and vertical-slice issues.
 
 ## 2. Design Goals
 
-Student Task Tracker will be a focused academic productivity dashboard that
+Student Task Tracker is a focused academic productivity dashboard that
 helps a Student quickly understand:
 
 - Which Academic Tasks still require action.
@@ -34,7 +35,7 @@ The design prioritizes:
 
 ## 3. Technology Stack Decision
 
-### Recommended Stack
+### Final Stack
 
 | Concern | Decision | Reason |
 |---|---|---|
@@ -58,7 +59,7 @@ The design prioritizes:
 
 Use a modern academic productivity dashboard visual language.
 
-The interface will use:
+The interface uses:
 
 - Strong content hierarchy and generous whitespace.
 - Restrained cards, borders, shadows, colors, and border radii.
@@ -77,7 +78,7 @@ The interface must avoid:
 
 ## 5. Typography System
 
-### Font Recommendation
+### Font Decision
 
 Use an offline-safe system font stack:
 
@@ -107,11 +108,11 @@ licensing checks, and font-loading work without improving core behavior.
 | Metadata | `0.875rem` | 500 | 1.45 | `0.01em` |
 | Validation/helper text | `0.875rem` | 550 | 1.45 | normal |
 
-Typography hierarchy will also use weight, spacing, placement, and semantic
+Typography hierarchy also uses weight, spacing, placement, and semantic
 markup rather than relying only on font size.
 
 Body copy should use a maximum readable line length of approximately `65ch`.
-Text smaller than `0.875rem` will not be used for meaningful content.
+Text smaller than `0.875rem` is not used for meaningful content.
 
 ## 6. Design Tokens
 
@@ -172,8 +173,8 @@ WCAG AA.
 | `--breakpoint-compact` | `45rem` |
 | `--breakpoint-minimum` | `20rem` |
 
-Motion will be limited to functional state transitions. Under
-`prefers-reduced-motion: reduce`, non-essential transitions will be disabled.
+Motion is limited to functional state transitions. Under
+`prefers-reduced-motion: reduce`, non-essential transitions are disabled.
 
 ## 7. Primary User Flows
 
@@ -471,42 +472,24 @@ Tests must not depend on the machine clock or private implementation details.
 - Domain behavior does not directly call `localStorage`.
 - Tests can provide controlled stored values and failures.
 
-## 14. File and Module Structure
+## 14. Final File and Module Structure
 
 ```text
 src/
   index.html
-  styles/
-    tokens.css
-    base.css
-    components.css
-    responsive.css
-  scripts/
-    app.js
-    domain/
-      academic-task.js
-      validation.js
-      task-collection.js
-    storage/
-      task-storage.js
-    ui/
-      task-form.js
-      task-list.js
-      filter-control.js
-      delete-dialog.js
-      notifications.js
+  style.css
+  app.js
+  notification-logic.js
+  task-logic.js
+  task-storage.js
 
 tests/
-  domain/
-    academic-task.test.js
-    validation.test.js
-    task-collection.test.js
-  storage/
-    task-storage.test.js
+  task.test.js
+  task-storage.test.js
 ```
 
-The final structure may be consolidated if the modules become too small.
-Responsibility boundaries should remain clear even if fewer files are used.
+The implementation consolidated the originally considered small UI and domain
+modules while preserving clear responsibility boundaries.
 
 ## 15. Architecture Diagram
 
@@ -535,76 +518,50 @@ Responsibility boundaries should remain clear even if fewer files are used.
 The Browser UI depends on domain behavior and the storage adapter. Domain
 behavior remains independent from the DOM and browser storage.
 
-## 16. Planned TDD Behaviors
+## 16. Completed TDD Behaviors
 
 ### Issue #11 - Student Receives Actionable Validation Feedback
 
-Planned RED, GREEN, REFACTOR behavior:
-
-1. **RED:** Submitting blank Task Title, Course, and Due Date returns
-   field-specific validation problems.
-2. **GREEN:** Implement the minimum validation behavior required to return all
-   required-field problems.
-3. **REFACTOR:** Consolidate validation result formatting without changing the
-   public behavior.
-4. **RED:** A past Due Date is rejected while today's local Due Date is valid.
-5. **GREEN:** Implement deterministic local-calendar Due Date validation.
-6. **REFACTOR:** Isolate date comparison from input parsing.
-
-Browser verification will confirm visible messages, announcement behavior,
-`aria-invalid`, associations, and focus on the first invalid field.
+Genuine RED-GREEN-REFACTOR cycles implemented field-specific validation,
+deterministic local-calendar Due Date validation, accessible summaries, and
+browser feedback. Evidence is documented in `docs/05-tdd-and-testing.md`.
 
 ### Issue #13 - Student Can Change Academic Task Status
 
-Planned RED, GREEN, REFACTOR behavior:
-
-1. **RED:** Changing a Pending Academic Task returns a Completed Academic Task.
-2. **GREEN:** Implement the minimum reversible status transition.
-3. **REFACTOR:** Centralize permitted status values.
-4. **RED:** Changing a Completed Academic Task returns a Pending Academic Task.
-5. **GREEN:** Implement reverse transition.
-6. **REFACTOR:** Keep transition behavior pure and explicit.
-7. **RED:** A Completed Academic Task is never Overdue.
-8. **GREEN:** Update derived Overdue behavior.
-9. **REFACTOR:** Consolidate status and Overdue rules.
-
-Browser verification will confirm the visible status, available action,
-announcement, persistence, and ordering after status changes.
+Genuine RED-GREEN-REFACTOR cycles implemented reversible Pending/Completed
+status transitions while preserving immutable task collections. Browser
+verification confirmed visible status, action feedback, persistence, and
+Overdue behavior.
 
 ## 17. Issue-to-Design Mapping
 
 | Issue | Components | Modules | Primary Test Seams | Browser Verification |
 |---|---|---|---|---|
-| #10 Add Academic Task | Form, List, Notification | validation, academic-task, app | Create public behavior | Valid task creation, reset, focus, success feedback |
-| #11 Validation feedback | Form, Validation Summary | validation, task-form | Validation public behavior | Errors, announcement, focus, today/past Due Date |
-| #12 Ordered and Overdue tasks | List, Card, Status Badge | task-collection, task-list | Order and Overdue behavior | Order, labels, non-color status |
-| #13 Change status | Card, Status Badge, Notification | academic-task, task-collection | Status transition behavior | Reversible status, announcement, Overdue update |
-| #14 Filter tasks | Filter Control, List | filter-control, task-collection | Filter public behavior | `aria-pressed`, keyboard use, 320px layout |
-| #15 Delete task | Card, Delete Dialog, Notification | delete-dialog, task-collection | Delete public behavior | Dialog focus, Escape, Cancel, confirmed delete |
-| #16 Persist tasks | Notification Region | task-storage, app | Storage adapter boundary | Refresh restore, recovery warning, save failure |
+| #10 Add Academic Task | Form, List, Notification | `task-logic.js`, `app.js`, `notification-logic.js` | Create public behavior | Valid task creation, reset, focus, success feedback |
+| #11 Validation feedback | Form, Validation Summary | `task-logic.js`, `app.js` | Validation public behavior | Errors, announcement, focus, today/past Due Date |
+| #12 Ordered and Overdue tasks | List, Card, Status Badge | `task-logic.js`, `app.js` | Order and Overdue behavior | Order, labels, non-color status |
+| #13 Change status | Card, Status Badge, Notification | `task-logic.js`, `app.js`, `notification-logic.js` | Status transition behavior | Reversible status, announcement, Overdue update |
+| #14 Filter tasks | Filter Control, List | `task-logic.js`, `app.js` | Filter public behavior | `aria-pressed`, keyboard use, 320px layout |
+| #15 Delete task | Card, Delete Dialog, Notification | `task-logic.js`, `app.js`, `notification-logic.js` | Delete public behavior | Dialog focus, Escape, Cancel, confirmed delete |
+| #16 Persist tasks | Notification Region | `task-storage.js`, `app.js` | Storage adapter boundary | Refresh restore, recovery warning, save failure |
 
-## 18. Chrome DevTools MCP Verification Strategy
+## 18. Final Chrome DevTools MCP Verification
 
-Chrome DevTools MCP will be used directly by AI after implementation.
+Chrome DevTools MCP was operated directly by AI after implementation.
 
-### Required Verification
+### Completed Verification
 
-- Open the working application in Chrome.
-- Capture a desktop snapshot and screenshot.
-- Verify task creation and ordered display.
-- Inspect console messages and confirm no unexpected errors.
-- Inspect `localStorage` after create, status change, and delete.
-- Refresh and verify restored tasks.
-- Inject or reproduce invalid storage and verify recovery warning.
-- Verify filter button `aria-pressed` state.
-- Verify keyboard focus sequence and delete-dialog behavior.
-- Set viewport width to 320px.
-- Confirm no horizontal scrolling.
-- Capture mobile screenshot.
-- Verify status is understandable without relying only on color.
+- Opened and exercised the working application in Chrome.
+- Captured desktop and mobile snapshots and screenshots.
+- Verified creation, ordering, status changes, filtering, and deletion.
+- Confirmed no unexpected console errors.
+- Inspected `localStorage`, refresh restoration, and recovery warnings.
+- Verified filter `aria-pressed` state and keyboard focus behavior.
+- Confirmed the 320px viewport has no horizontal scrolling.
+- Verified status remains understandable without relying only on color.
 
-New screenshots and logs must be generated during the rebuild. Historical
-evidence cannot be used as proof of the rebuilt application.
+All submitted screenshots and logs were generated during the rebuild. The final
+matrix and evidence paths are documented in `docs/05-tdd-and-testing.md`.
 
 ## 19. Visual Usability and Accessibility Rationale
 
@@ -624,7 +581,7 @@ evidence cannot be used as proof of the rebuilt application.
 
 A system-font stack is less visually unique than an external display font, but
 it preserves offline operation, performance, and reliability. Visual identity
-will instead come from hierarchy, spacing, color, and component treatment.
+instead comes from hierarchy, spacing, color, and component treatment.
 
 ### Polish vs Two-Day Scope
 
@@ -677,13 +634,10 @@ The design does not include:
 - Persistent filter selection.
 - Additional task fields.
 
-## 23. Approval Gate
+## 23. Approval and Implementation Status
 
 This design was approved by the human reviewer before implementation.
 
-After approval:
-
-1. Implement one approved vertical-slice issue at a time.
-2. Create feature or fix branches from `development`.
-3. Apply genuine TDD to Issues #11 and #13.
-4. Use Chrome DevTools MCP for browser verification.
+Implementation then completed one approved vertical-slice issue at a time on
+feature or fix branches from `development`. Genuine TDD was applied to Issues
+#11 and #13, and Chrome DevTools MCP was used for browser verification.
