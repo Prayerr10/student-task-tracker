@@ -1,0 +1,78 @@
+uid=28_0 RootWebArea "Student Task Tracker" url="http://localhost:4174/"
+  uid=28_1 ignored
+    uid=28_2 ignored
+      uid=28_3 banner
+        uid=28_4 ignored
+          uid=28_5 paragraph
+            uid=28_6 StaticText "ACADEMIC PRODUCTIVITY"
+          uid=28_7 heading "Student Task Tracker" level="1"
+            uid=28_8 StaticText "Student Task Tracker"
+          uid=28_9 paragraph
+            uid=28_10 StaticText "Keep the work for every Course clear and in one place."
+      uid=28_11 main
+        uid=28_12 region "Add an Academic Task"
+          uid=28_13 ignored
+            uid=28_14 paragraph
+              uid=28_15 StaticText "NEW ACADEMIC TASK"
+            uid=28_16 heading "Add an Academic Task" level="2"
+              uid=28_17 StaticText "Add an Academic Task"
+            uid=28_18 paragraph
+              uid=28_19 StaticText "Record the work you need to complete."
+          uid=28_20 form
+            uid=28_21 ignored
+              uid=28_22 LabelText
+                uid=28_23 StaticText "Task Title"
+              uid=28_24 textbox "Task Title" required
+                uid=28_25 generic
+              uid=28_26 ignored
+            uid=28_27 ignored
+              uid=28_28 LabelText
+                uid=28_29 StaticText "Course"
+              uid=28_30 textbox "Course" required
+                uid=28_31 generic
+              uid=28_32 ignored
+            uid=28_33 ignored
+              uid=28_34 LabelText
+                uid=28_35 StaticText "Due Date"
+              uid=28_36 Date "Due Date" invalid="true"
+                uid=28_37 ignored
+                  uid=28_38 generic
+                    uid=28_39 generic
+                      uid=28_40 spinbutton "Month Month" value="0" valuemax="12" valuemin="1" valuetext=""
+                        uid=28_41 StaticText "mm"
+                      uid=28_42 StaticText "/"
+                      uid=28_43 spinbutton "Day Day" value="0" valuemax="31" valuemin="1" valuetext=""
+                        uid=28_44 StaticText "dd"
+                      uid=28_45 StaticText "/"
+                      uid=28_46 spinbutton "Year Year" value="0" valuemax="275760" valuemin="1" valuetext=""
+                        uid=28_47 StaticText "yyyy"
+                  uid=28_48 button "Show date picker" haspopup="menu"
+              uid=28_49 ignored
+            uid=28_50 button "Add Academic Task"
+              uid=28_51 StaticText "Add Academic Task"
+        uid=28_52 region "Academic Tasks"
+          uid=28_53 ignored
+            uid=28_54 ignored
+              uid=28_55 paragraph
+                uid=28_56 StaticText "YOUR WORKLOAD"
+              uid=28_57 heading "Academic Tasks" level="2"
+                uid=28_58 StaticText "Academic Tasks"
+            uid=28_59 generic
+              uid=28_60 StaticText "0 Academic Tasks"
+          uid=28_61 generic "Filter Academic Tasks"
+            uid=28_62 button "All" pressed
+              uid=28_63 StaticText "All"
+            uid=28_64 button "Pending"
+              uid=28_65 StaticText "Pending"
+            uid=28_66 button "Completed"
+              uid=28_67 StaticText "Completed"
+          uid=28_68 generic
+            uid=28_69 ignored
+              uid=28_70 heading "No Academic Tasks yet" level="3"
+                uid=28_71 StaticText "No Academic Tasks yet"
+              uid=28_72 paragraph
+                uid=28_73 StaticText "Add your first Academic Task to start organizing your workload."
+      uid=28_74 ignored
+        uid=28_75 ignored
+      uid=28_76 ignored
+        uid=28_77 ignored

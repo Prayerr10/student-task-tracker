@@ -58,7 +58,7 @@
       <div class="tasks-heading-row">
         <div class="section-heading">
           <p class="eyebrow">Your workload</p>
-          <h2 id="academic-tasks-heading">Academic Tasks</h2>
+        <h2 id="academic-tasks-heading" tabindex="-1">Academic Tasks</h2>
         </div>
         <span id="task-count" class="task-count">0 Academic Tasks</span>
       </div>
@@ -74,5 +74,16 @@
   </main>
 
   <div id="notification" class="notification" role="status" aria-live="polite"></div>
+
+  <dialog id="delete-dialog" class="delete-dialog" aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-description">
+    <form method="dialog" class="delete-dialog__content">
+      <h2 id="delete-dialog-title">Delete Academic Task?</h2>
+      <p id="delete-dialog-description">This will permanently delete the selected Academic Task.</p>
+      <div class="delete-dialog__actions">
+        <button id="delete-dialog-cancel" type="submit" value="cancel" class="secondary-button">Cancel</button>
+        <button id="delete-dialog-confirm" type="submit" value="confirm" class="danger-button">Delete</button>
+      </div>
+    </form>
+  </dialog>
 </body>
 </html>

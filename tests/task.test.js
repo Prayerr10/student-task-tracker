@@ -1,6 +1,7 @@
 const {
   createAcademicTask,
   createValidationFeedback,
+  deleteAcademicTask,
   filterAcademicTasks,
   formatDueDate,
   isAcademicTaskOverdue,
@@ -8,7 +9,10 @@ const {
   toggleAcademicTaskStatus,
   validateAcademicTaskInput
 } = require("../src/task-logic");
-const { createSuccessfulCreationAnnouncement } = require("../src/notification-logic");
+const {
+  createSuccessfulCreationAnnouncement,
+  createSuccessfulDeletionAnnouncement
+} = require("../src/notification-logic");
 
 describe("createAcademicTask", () => {
   it("creates one separate Pending Academic Task with the submitted values", () => {
@@ -261,6 +265,28 @@ describe("toggleAcademicTaskStatus", () => {
   });
 });
 
+describe("deleteAcademicTask", () => {
+  it("removes only the selected Academic Task without mutating the collection", () => {
+    const firstTask = {
+      id: "first",
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-20",
+      status: "Pending",
+      createdAt: "2026-06-15T09:00:00.000Z"
+    };
+    const secondTask = {
+      ...firstTask,
+      id: "second",
+      title: "Reading response"
+    };
+    const academicTasks = [firstTask, secondTask];
+
+    expect(deleteAcademicTask(academicTasks, "first")).toEqual([secondTask]);
+    expect(academicTasks).toEqual([firstTask, secondTask]);
+  });
+});
+
 describe("filterAcademicTasks", () => {
   const pendingTask = {
     id: "pending",
@@ -290,5 +316,18 @@ describe("filterAcademicTasks", () => {
 
   it("returns Completed Academic Tasks for the Completed filter", () => {
     expect(filterAcademicTasks([pendingTask, completedTask], "Completed")).toEqual([completedTask]);
+  });
+});
+
+describe("createSuccessfulDeletionAnnouncement", () => {
+  it("creates distinguishable accessible updates for repeated successful deletion", () => {
+    const first = createSuccessfulDeletionAnnouncement();
+    const second = createSuccessfulDeletionAnnouncement(first.sequence);
+
+    expect(first.visualMessage).toBe("Academic Task deleted successfully.");
+    expect(second.visualMessage).toBe(first.visualMessage);
+    expect(second.accessibleMessage).not.toBe(first.accessibleMessage);
+    expect(first.accessibleMessage).toContain("Academic Task deleted successfully.");
+    expect(second.accessibleMessage).toContain("Academic Task deleted successfully.");
   });
 });
