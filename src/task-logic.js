@@ -98,12 +98,24 @@
     }).format(new Date(year, month - 1, day));
   }
 
+  function toggleAcademicTaskStatus(academicTasks, selectedId) {
+    return academicTasks.map((academicTask) => (
+      academicTask.id === selectedId
+        ? {
+          ...academicTask,
+          status: academicTask.status === "Pending" ? "Completed" : "Pending"
+        }
+        : academicTask
+    ));
+  }
+
   return {
     createAcademicTask,
     createValidationFeedback,
     formatDueDate,
     isAcademicTaskOverdue,
     orderAcademicTasks,
+    toggleAcademicTaskStatus,
     validateAcademicTaskInput
   };
 }));

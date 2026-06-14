@@ -1,0 +1,74 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : FAIL tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (2 ms)
+    v allows duplicate Academic Tasks as separate entities
+    v does not mutate the existing Academic Task collection
+    v keeps submitted text as plain data
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation (1 ms)
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input
+    v rejects a Task Title longer than 120 characters (1 ms)
+    v rejects a Course longer than 80 characters
+    v rejects an invalid Due Date
+    v rejects an impossible calendar Due Date
+    v rejects a past Due Date (1 ms)
+    v accepts today's Due Date
+  createValidationFeedback
+    v describes the first invalid field and an accessible validation summary
+    v uses an understandable singular summary for one invalid field
+  Academic Task list behavior
+    v orders Academic Tasks by Due Date then creation time (7 ms)
+    v derives Overdue only for Pending Academic Tasks before today
+    v formats Due Date using an unambiguous English format (6 ms)
+    v does not mutate the source collection while ordering
+  toggleAcademicTaskStatus
+    v changes only the selected Pending Academic Task to Completed while preserving details
+    × changes a Completed Academic Task back to Pending (3 ms)
+
+  ? toggleAcademicTaskStatus › changes a Completed Academic Task back to Pending
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+    @@ -2,9 +2,9 @@
+        Object {
+          "course": "Software Engineering",
+          "createdAt": "2026-06-15T09:00:00.000Z",
+          "dueDate": "2026-06-14",
+          "id": "selected",
+    -     "status": "Pending",
+    +     "status": "Completed",
+          "title": "Research outline",
+        },
+      ]
+
+    [0m [90m 255 |[39m     }[33m;[39m
+     [90m 256 |[39m
+    [31m[1m>[22m[39m[90m 257 |[39m     expect(toggleAcademicTaskStatus([completed][33m,[39m 
+[32m"selected"[39m))[33m.[39mtoEqual([
+     [90m     |[39m                                                               [31m[1m^[22m[39m
+     [90m 258 |[39m       { [33m...[39mcompleted[33m,[39m status[33m:[39m [32m"Pending"[39m }
+     [90m 259 |[39m     ])[33m;[39m
+     [90m 260 |[39m   })[33m;[39m[0m
+
+      at Object.toEqual (tests/task.test.js:257:63)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 19 passed, 20 total
+Snapshots:   0 total
+Time:        0.371 s, estimated 1 s
+Ran all test suites.
+

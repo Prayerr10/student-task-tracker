@@ -263,6 +263,22 @@ form {
   font-weight: 700;
 }
 
+.status-button {
+  width: fit-content;
+  min-height: 2.75rem;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-dark);
+  background: var(--color-surface);
+  font-weight: 700;
+}
+
+.status-button:hover {
+  color: #ffffff;
+  background: var(--color-primary-dark);
+}
+
 .task-course,
 .task-due-date {
   overflow-wrap: anywhere;

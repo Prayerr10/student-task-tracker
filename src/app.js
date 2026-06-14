@@ -54,6 +54,7 @@ function showValidationFeedback(problems) {
 function createTaskCard(academicTask) {
   const article = document.createElement("article");
   article.className = "task-card";
+  article.dataset.taskId = academicTask.id;
 
   const status = document.createElement("p");
   status.className = "status-badge";
@@ -78,7 +79,19 @@ function createTaskCard(academicTask) {
   dueDate.className = "task-due-date";
   dueDate.textContent = `Due Date: ${AcademicTaskDomain.formatDueDate(academicTask.dueDate)}`;
 
-  article.append(status, title, course, dueDate);
+  const statusButton = document.createElement("button");
+  statusButton.className = "status-button";
+  statusButton.type = "button";
+  statusButton.textContent = academicTask.status === "Pending" ? "Mark Completed" : "Return to Pending";
+  statusButton.addEventListener("click", () => {
+    academicTasks = AcademicTaskDomain.toggleAcademicTaskStatus(academicTasks, academicTask.id);
+    const updatedTask = academicTasks.find((task) => task.id === academicTask.id);
+    renderAcademicTasks();
+    announceStatusChange(updatedTask);
+    document.querySelector(`[data-task-id="${academicTask.id}"] .status-button`)?.focus();
+  });
+
+  article.append(status, title, course, dueDate, statusButton);
   return article;
 }
 
@@ -120,6 +133,14 @@ function announceSuccessfulCreation() {
   accessibleMessage.textContent = announcement.accessibleMessage;
 
   notification.replaceChildren(visualMessage, accessibleMessage);
+  notificationTimeout = window.setTimeout(() => {
+    notification.replaceChildren();
+  }, 4000);
+}
+
+function announceStatusChange(academicTask) {
+  window.clearTimeout(notificationTimeout);
+  notification.textContent = `${academicTask.title} changed to ${academicTask.status}.`;
   notificationTimeout = window.setTimeout(() => {
     notification.replaceChildren();
   }, 4000);

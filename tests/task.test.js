@@ -4,6 +4,7 @@ const {
   formatDueDate,
   isAcademicTaskOverdue,
   orderAcademicTasks,
+  toggleAcademicTaskStatus,
   validateAcademicTaskInput
 } = require("../src/task-logic");
 const { createSuccessfulCreationAnnouncement } = require("../src/notification-logic");
@@ -222,5 +223,39 @@ describe("Academic Task list behavior", () => {
     const source = [laterTask, earliestDueTask];
     orderAcademicTasks(source);
     expect(source.map((task) => task.id)).toEqual(["later", "earliest-due"]);
+  });
+});
+
+describe("toggleAcademicTaskStatus", () => {
+  it("changes only the selected Pending Academic Task to Completed while preserving details", () => {
+    const selected = {
+      id: "selected",
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-20",
+      status: "Pending",
+      createdAt: "2026-06-15T09:00:00.000Z"
+    };
+    const other = { ...selected, id: "other", title: "Other task" };
+
+    expect(toggleAcademicTaskStatus([selected, other], "selected")).toEqual([
+      { ...selected, status: "Completed" },
+      other
+    ]);
+  });
+
+  it("changes a Completed Academic Task back to Pending", () => {
+    const completed = {
+      id: "selected",
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-14",
+      status: "Completed",
+      createdAt: "2026-06-15T09:00:00.000Z"
+    };
+
+    expect(toggleAcademicTaskStatus([completed], "selected")).toEqual([
+      { ...completed, status: "Pending" }
+    ]);
   });
 });
