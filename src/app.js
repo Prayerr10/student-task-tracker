@@ -4,11 +4,52 @@ let academicTasks = [];
 
 const academicTaskForm = document.querySelector("#academic-task-form");
 const titleInput = document.querySelector("#task-title");
+const courseInput = document.querySelector("#task-course");
+const dueDateInput = document.querySelector("#task-due-date");
+const validationSummary = document.querySelector("#validation-summary");
 const taskList = document.querySelector("#task-list");
 const taskCount = document.querySelector("#task-count");
 const notification = document.querySelector("#notification");
 let notificationTimeout;
 let notificationSequence = 0;
+const fieldControls = {
+  title: titleInput,
+  course: courseInput,
+  dueDate: dueDateInput
+};
+const fieldErrors = {
+  title: document.querySelector("#task-title-error"),
+  course: document.querySelector("#task-course-error"),
+  dueDate: document.querySelector("#task-due-date-error")
+};
+
+function getLocalCalendarDate() {
+  const now = new Date();
+  const offset = now.getTimezoneOffset() * 60 * 1000;
+  return new Date(now.getTime() - offset).toISOString().slice(0, 10);
+}
+
+function clearValidationFeedback() {
+  validationSummary.textContent = "";
+
+  Object.keys(fieldControls).forEach((field) => {
+    fieldControls[field].removeAttribute("aria-invalid");
+    fieldErrors[field].textContent = "";
+  });
+}
+
+function showValidationFeedback(problems) {
+  clearValidationFeedback();
+
+  Object.entries(problems).forEach(([field, message]) => {
+    fieldControls[field].setAttribute("aria-invalid", "true");
+    fieldErrors[field].textContent = message;
+  });
+
+  const feedback = AcademicTaskDomain.createValidationFeedback(problems);
+  validationSummary.textContent = feedback.summary;
+  fieldControls[feedback.firstInvalidField].focus();
+}
 
 function createTaskCard(academicTask) {
   const article = document.createElement("article");
@@ -80,12 +121,20 @@ academicTaskForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
   const formData = new FormData(academicTaskForm);
-  academicTasks = AcademicTaskDomain.createAcademicTask(academicTasks, {
+  const input = {
     title: formData.get("title"),
     course: formData.get("course"),
     dueDate: formData.get("dueDate")
-  });
+  };
+  const problems = AcademicTaskDomain.validateAcademicTaskInput(input, getLocalCalendarDate());
 
+  if (Object.keys(problems).length > 0) {
+    showValidationFeedback(problems);
+    return;
+  }
+
+  clearValidationFeedback();
+  academicTasks = AcademicTaskDomain.createAcademicTask(academicTasks, input);
   renderAcademicTasks();
   academicTaskForm.reset();
   announceSuccessfulCreation();

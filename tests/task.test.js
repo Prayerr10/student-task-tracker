@@ -1,4 +1,8 @@
-const { createAcademicTask } = require("../src/task-logic");
+const {
+  createAcademicTask,
+  createValidationFeedback,
+  validateAcademicTaskInput
+} = require("../src/task-logic");
 const { createSuccessfulCreationAnnouncement } = require("../src/notification-logic");
 
 describe("createAcademicTask", () => {
@@ -74,5 +78,88 @@ describe("createSuccessfulCreationAnnouncement", () => {
     expect(second.accessibleMessage).not.toBe(first.accessibleMessage);
     expect(first.accessibleMessage).toContain("Academic Task added successfully.");
     expect(second.accessibleMessage).toContain("Academic Task added successfully.");
+  });
+});
+
+describe("validateAcademicTaskInput", () => {
+  it("returns field-specific required problems for blank Academic Task input", () => {
+    expect(validateAcademicTaskInput({
+      title: "   ",
+      course: "",
+      dueDate: " "
+    })).toEqual({
+      title: "Task Title is required.",
+      course: "Course is required.",
+      dueDate: "Due Date is required."
+    });
+  });
+
+  it("rejects a Task Title longer than 120 characters", () => {
+    expect(validateAcademicTaskInput({
+      title: "T".repeat(121),
+      course: "Software Engineering",
+      dueDate: "2026-06-15"
+    })).toEqual({
+      title: "Task Title must be 120 characters or fewer."
+    });
+  });
+
+  it("rejects a Course longer than 80 characters", () => {
+    expect(validateAcademicTaskInput({
+      title: "Research outline",
+      course: "C".repeat(81),
+      dueDate: "2026-06-15"
+    })).toEqual({
+      course: "Course must be 80 characters or fewer."
+    });
+  });
+
+  it("rejects an invalid Due Date", () => {
+    expect(validateAcademicTaskInput({
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "not-a-date"
+    }, "2026-06-15")).toEqual({
+      dueDate: "Enter a valid Due Date."
+    });
+  });
+
+  it("rejects a past Due Date", () => {
+    expect(validateAcademicTaskInput({
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-14"
+    }, "2026-06-15")).toEqual({
+      dueDate: "Due Date cannot be in the past."
+    });
+  });
+
+  it("accepts today's Due Date", () => {
+    expect(validateAcademicTaskInput({
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-06-15"
+    }, "2026-06-15")).toEqual({});
+  });
+});
+
+describe("createValidationFeedback", () => {
+  it("describes the first invalid field and an accessible validation summary", () => {
+    expect(createValidationFeedback({
+      title: "Task Title is required.",
+      dueDate: "Due Date is required."
+    })).toEqual({
+      firstInvalidField: "title",
+      summary: "Please correct 2 fields before adding the Academic Task."
+    });
+  });
+
+  it("uses an understandable singular summary for one invalid field", () => {
+    expect(createValidationFeedback({
+      dueDate: "Due Date cannot be in the past."
+    })).toEqual({
+      firstInvalidField: "dueDate",
+      summary: "Please correct 1 field before adding the Academic Task."
+    });
   });
 });

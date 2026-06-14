@@ -30,20 +30,24 @@
         <p>Record the work you need to complete.</p>
       </div>
 
-      <form id="academic-task-form">
+      <form id="academic-task-form" novalidate>
+        <p id="validation-summary" class="validation-summary" role="alert" aria-live="assertive"></p>
         <div class="form-field">
           <label for="task-title">Task Title</label>
-          <input id="task-title" name="title" type="text" maxlength="120" required>
+          <input id="task-title" name="title" type="text" required aria-describedby="task-title-error">
+          <p id="task-title-error" class="field-error"></p>
         </div>
 
         <div class="form-field">
           <label for="task-course">Course</label>
-          <input id="task-course" name="course" type="text" maxlength="80" required>
+          <input id="task-course" name="course" type="text" required aria-describedby="task-course-error">
+          <p id="task-course-error" class="field-error"></p>
         </div>
 
         <div class="form-field">
           <label for="task-due-date">Due Date</label>
-          <input id="task-due-date" name="dueDate" type="date" required>
+          <input id="task-due-date" name="dueDate" type="date" required aria-describedby="task-due-date-error">
+          <p id="task-due-date-error" class="field-error"></p>
         </div>
 
         <button class="primary-button" type="submit">Add Academic Task</button>

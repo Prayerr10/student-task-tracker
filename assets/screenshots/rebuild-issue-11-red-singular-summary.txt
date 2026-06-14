@@ -1,0 +1,58 @@
+
+> student-task-tracker@1.0.0 test
+> jest --runInBand
+
+npm.cmd : FAIL tests/task.test.js
+At line:2 char:4
++ $o=npm.cmd test -- --runInBand 2>&1|Out-String; Set-Content 'assets/s ...
++    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (FAIL tests/task.test.js:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  createAcademicTask
+    v creates one separate Pending Academic Task with the submitted values (2 ms)
+    v allows duplicate Academic Tasks as separate entities
+    v does not mutate the existing Academic Task collection (1 ms)
+    v keeps submitted text as plain data
+  createSuccessfulCreationAnnouncement
+    v creates distinguishable accessible updates for repeated successful creation (1 ms)
+  validateAcademicTaskInput
+    v returns field-specific required problems for blank Academic Task input
+    v rejects a Task Title longer than 120 characters
+    v rejects a Course longer than 80 characters
+    v rejects an invalid Due Date
+    v rejects a past Due Date
+    v accepts today's Due Date (1 ms)
+  createValidationFeedback
+    v describes the first invalid field and an accessible validation summary
+    × uses an understandable singular summary for one invalid field (2 ms)
+
+  ? createValidationFeedback › uses an understandable singular summary for one invalid field
+
+    expect(received).toEqual(expected) // deep equality
+
+    - Expected  - 1
+    + Received  + 1
+
+      Object {
+        "firstInvalidField": "dueDate",
+    -   "summary": "Please correct 1 field before adding the Academic Task.",
+    +   "summary": "Please correct 1 fields before adding the Academic Task.",
+      }
+
+    [0m [90m 158 |[39m     expect(createValidationFeedback({
+     [90m 159 |[39m       dueDate[33m:[39m [32m"Due Date cannot be in the past."[39m
+    [31m[1m>[22m[39m[90m 160 |[39m     }))[33m.[39mtoEqual({
+     [90m     |[39m         [31m[1m^[22m[39m
+     [90m 161 |[39m       firstInvalidField[33m:[39m [32m"dueDate"[39m[33m,[39m
+     [90m 162 |[39m       summary[33m:[39m [32m"Please correct 1 field before adding the Academic Task."[39m
+     [90m 163 |[39m     })[33m;[39m[0m
+
+      at Object.toEqual (tests/task.test.js:160:9)
+
+Test Suites: 1 failed, 1 total
+Tests:       1 failed, 12 passed, 13 total
+Snapshots:   0 total
+Time:        0.377 s, estimated 1 s
+Ran all test suites.
+
