@@ -1,4 +1,5 @@
 const { createAcademicTask } = require("../src/task-logic");
+const { createSuccessfulCreationAnnouncement } = require("../src/notification-logic");
 
 describe("createAcademicTask", () => {
   it("creates one separate Pending Academic Task with the submitted values", () => {
@@ -60,5 +61,18 @@ describe("createAcademicTask", () => {
 
     expect(result[0].title).toBe(submittedTitle);
     expect(result[0].course).toBe("<script>unsafe</script>");
+  });
+});
+
+describe("createSuccessfulCreationAnnouncement", () => {
+  it("creates distinguishable accessible updates for repeated successful creation", () => {
+    const first = createSuccessfulCreationAnnouncement();
+    const second = createSuccessfulCreationAnnouncement(first.sequence);
+
+    expect(first.visualMessage).toBe("Academic Task added successfully.");
+    expect(second.visualMessage).toBe(first.visualMessage);
+    expect(second.accessibleMessage).not.toBe(first.accessibleMessage);
+    expect(first.accessibleMessage).toContain("Academic Task added successfully.");
+    expect(second.accessibleMessage).toContain("Academic Task added successfully.");
   });
 });

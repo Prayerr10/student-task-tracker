@@ -8,6 +8,7 @@ const taskList = document.querySelector("#task-list");
 const taskCount = document.querySelector("#task-count");
 const notification = document.querySelector("#notification");
 let notificationTimeout;
+let notificationSequence = 0;
 
 function createTaskCard(academicTask) {
   const article = document.createElement("article");
@@ -58,9 +59,20 @@ function renderAcademicTasks() {
 
 function announceSuccessfulCreation() {
   window.clearTimeout(notificationTimeout);
-  notification.textContent = "Academic Task added successfully.";
+  const announcement = NotificationLogic.createSuccessfulCreationAnnouncement(notificationSequence);
+  notificationSequence = announcement.sequence;
+
+  const visualMessage = document.createElement("span");
+  visualMessage.setAttribute("aria-hidden", "true");
+  visualMessage.textContent = announcement.visualMessage;
+
+  const accessibleMessage = document.createElement("span");
+  accessibleMessage.className = "visually-hidden";
+  accessibleMessage.textContent = announcement.accessibleMessage;
+
+  notification.replaceChildren(visualMessage, accessibleMessage);
   notificationTimeout = window.setTimeout(() => {
-    notification.textContent = "";
+    notification.replaceChildren();
   }, 4000);
 }
 
