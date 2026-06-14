@@ -1,69 +1,36 @@
-(function taskLogicModule(root, factory) {
-  const taskLogic = factory();
+(function academicTaskDomainModule(root, factory) {
+  const academicTaskDomain = factory();
 
   if (typeof module === "object" && module.exports) {
-    module.exports = taskLogic;
+    module.exports = academicTaskDomain;
   } else {
-    root.TaskLogic = taskLogic;
+    root.AcademicTaskDomain = academicTaskDomain;
   }
-}(typeof globalThis !== "undefined" ? globalThis : this, function createTaskLogic() {
+}(typeof globalThis !== "undefined" ? globalThis : this, function createAcademicTaskDomain() {
   "use strict";
 
-  function createTaskId() {
+  function createId() {
     if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
       return crypto.randomUUID();
     }
 
-    return `task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    return `academic-task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
-  function addTask(tasks, title, subject, dueDate = "") {
-    const cleanTitle = String(title).trim();
-    const cleanSubject = String(subject).trim();
-    const cleanDueDate = String(dueDate).trim();
-
-    if (!cleanTitle || !cleanSubject) {
-      throw new Error("Task title and subject are required.");
-    }
-
-    const task = {
-      id: createTaskId(),
-      title: cleanTitle,
-      subject: cleanSubject,
-      dueDate: cleanDueDate,
-      completed: false,
+  function createAcademicTask(academicTasks, input) {
+    const academicTask = {
+      id: createId(),
+      title: input.title,
+      course: input.course,
+      dueDate: input.dueDate,
+      status: "Pending",
       createdAt: new Date().toISOString()
     };
 
-    return [task, ...tasks];
-  }
-
-  function deleteTask(tasks, id) {
-    return tasks.filter((task) => task.id !== id);
-  }
-
-  function toggleComplete(tasks, id) {
-    return tasks.map((task) => (
-      task.id === id ? { ...task, completed: !task.completed } : task
-    ));
-  }
-
-  function filterTasks(tasks, status) {
-    if (status === "active") {
-      return tasks.filter((task) => !task.completed);
-    }
-
-    if (status === "completed") {
-      return tasks.filter((task) => task.completed);
-    }
-
-    return [...tasks];
+    return [...academicTasks, academicTask];
   }
 
   return {
-    addTask,
-    deleteTask,
-    toggleComplete,
-    filterTasks
+    createAcademicTask
   };
 }));
