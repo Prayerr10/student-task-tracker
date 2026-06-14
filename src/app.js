@@ -2,6 +2,8 @@
 
 let academicTasks = [];
 let activeFilter = "All";
+let deletionSequence = 0;
+let deleteDialogContext = null;
 
 const academicTaskForm = document.querySelector("#academic-task-form");
 const titleInput = document.querySelector("#task-title");
@@ -11,6 +13,12 @@ const validationSummary = document.querySelector("#validation-summary");
 const taskList = document.querySelector("#task-list");
 const taskCount = document.querySelector("#task-count");
 const notification = document.querySelector("#notification");
+const academicTasksHeading = document.querySelector("#academic-tasks-heading");
+const deleteDialog = document.querySelector("#delete-dialog");
+const deleteDialogTitle = document.querySelector("#delete-dialog-title");
+const deleteDialogDescription = document.querySelector("#delete-dialog-description");
+const deleteDialogCancelButton = document.querySelector("#delete-dialog-cancel");
+const deleteDialogConfirmButton = document.querySelector("#delete-dialog-confirm");
 const filterButtons = [...document.querySelectorAll("[data-filter]")];
 let notificationTimeout;
 let notificationSequence = 0;
@@ -94,7 +102,15 @@ function createTaskCard(academicTask) {
     (updatedStatusButton || document.querySelector(`[data-filter="${activeFilter}"]`))?.focus();
   });
 
-  article.append(status, title, course, dueDate, statusButton);
+  const deleteButton = document.createElement("button");
+  deleteButton.className = "delete-button";
+  deleteButton.type = "button";
+  deleteButton.textContent = "Delete";
+  deleteButton.addEventListener("click", () => {
+    openDeleteDialog(academicTask, deleteButton);
+  });
+
+  article.append(status, title, course, dueDate, statusButton, deleteButton);
   return article;
 }
 
@@ -174,6 +190,80 @@ function announceStatusChange(academicTask) {
     notification.replaceChildren();
   }, 4000);
 }
+
+function announceDeletion(academicTask) {
+  window.clearTimeout(notificationTimeout);
+  const announcement = NotificationLogic.createSuccessfulDeletionAnnouncement(deletionSequence);
+  deletionSequence = announcement.sequence;
+  const visualMessage = document.createElement("span");
+  visualMessage.setAttribute("aria-hidden", "true");
+  visualMessage.textContent = announcement.visualMessage;
+
+  const accessibleMessage = document.createElement("span");
+  accessibleMessage.className = "visually-hidden";
+  accessibleMessage.textContent = `${announcement.accessibleMessage} ${academicTask.title}.`;
+
+  notification.replaceChildren(visualMessage, accessibleMessage);
+  notificationTimeout = window.setTimeout(() => {
+    notification.replaceChildren();
+  }, 4000);
+}
+
+function openDeleteDialog(academicTask, triggerButton) {
+  deleteDialogContext = {
+    academicTaskId: academicTask.id,
+    title: academicTask.title,
+    triggerButton
+  };
+
+  deleteDialogTitle.textContent = `Delete ${academicTask.title}?`;
+  deleteDialogDescription.textContent = `This will permanently delete Academic Task "${academicTask.title}".`;
+  deleteDialog.showModal();
+  deleteDialogCancelButton.focus();
+}
+
+function focusAfterDeletion(deletedIndex) {
+  const filteredTasks = AcademicTaskDomain.filterAcademicTasks(academicTasks, activeFilter);
+  const orderedTasks = AcademicTaskDomain.orderAcademicTasks(filteredTasks);
+  const nextAcademicTask = orderedTasks[deletedIndex] || orderedTasks[deletedIndex - 1];
+
+  if (nextAcademicTask) {
+    window.requestAnimationFrame(() => {
+      document.querySelector(`[data-task-id="${nextAcademicTask.id}"] .delete-button`)?.focus();
+    });
+    return;
+  }
+
+  window.requestAnimationFrame(() => {
+    academicTasksHeading.focus();
+  });
+}
+
+deleteDialog.addEventListener("close", () => {
+  if (!deleteDialogContext) {
+    return;
+  }
+
+  const { academicTaskId, triggerButton } = deleteDialogContext;
+
+  if (deleteDialog.returnValue === "confirm") {
+    const filteredTasksBeforeDelete = AcademicTaskDomain.orderAcademicTasks(
+      AcademicTaskDomain.filterAcademicTasks(academicTasks, activeFilter)
+    );
+    const deletedIndex = filteredTasksBeforeDelete.findIndex((academicTask) => academicTask.id === academicTaskId);
+    const deletedAcademicTask = academicTasks.find((academicTask) => academicTask.id === academicTaskId);
+    academicTasks = AcademicTaskDomain.deleteAcademicTask(academicTasks, academicTaskId);
+    renderAcademicTasks();
+    if (deletedAcademicTask) {
+      announceDeletion(deletedAcademicTask);
+    }
+    focusAfterDeletion(deletedIndex);
+  } else {
+    triggerButton?.focus();
+  }
+
+  deleteDialogContext = null;
+});
 
 academicTaskForm.addEventListener("submit", (event) => {
   event.preventDefault();

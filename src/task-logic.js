@@ -109,6 +109,10 @@
     ));
   }
 
+  function deleteAcademicTask(academicTasks, selectedId) {
+    return academicTasks.filter((academicTask) => academicTask.id !== selectedId);
+  }
+
   function filterAcademicTasks(academicTasks, filter) {
     if (filter === "All") {
       return [...academicTasks];
@@ -124,6 +128,7 @@
   return {
     createAcademicTask,
     createValidationFeedback,
+    deleteAcademicTask,
     filterAcademicTasks,
     formatDueDate,
     isAcademicTaskOverdue,

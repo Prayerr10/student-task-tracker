@@ -19,7 +19,18 @@
     };
   }
 
+  function createSuccessfulDeletionAnnouncement(previousSequence = 0) {
+    const sequence = previousSequence + 1;
+
+    return {
+      sequence,
+      visualMessage: "Academic Task deleted successfully.",
+      accessibleMessage: `Academic Task deleted successfully. Confirmation ${sequence}.`
+    };
+  }
+
   return {
-    createSuccessfulCreationAnnouncement
+    createSuccessfulCreationAnnouncement,
+    createSuccessfulDeletionAnnouncement
   };
 }));
