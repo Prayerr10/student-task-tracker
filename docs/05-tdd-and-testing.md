@@ -1,324 +1,115 @@
 # TDD and Testing Report
 
-## 1. TDD Cycle Summary
+## 1. TDD Summary
 
-The project used a red-green-refactor workflow for the core task behaviors:
+The project used a vertical-slice red-green-refactor workflow for task behavior that could be exercised through public interfaces. Pure task logic was kept in `src/task-logic.js`, and the browser app in `src/app.js` reused that logic for rendering, events, `localStorage`, and accessibility state.
 
-1. **RED:** Write a Jest test that describes one expected user-facing behavior before that behavior is available as testable pure logic. Run the test and confirm it fails for the expected reason.
-2. **GREEN:** Add the smallest implementation needed to satisfy the test, then run the suite until the test passes.
-3. **REFACTOR:** Improve the structure without changing behavior, then rerun all tests to confirm they remain green.
-
-The task operations were extracted from DOM-dependent code into `src/task-logic.js`. This allows Jest to test task creation, deletion, completion toggling, and filtering without loading a browser. The browser-facing `src/app.js` uses the same tested functions and remains responsible for rendering, events, `localStorage`, and UI state.
-
-Current automated test command:
-
-```bash
-npm test
-```
-
-Current result:
+The final automated test result is:
 
 ```text
-Test Suites: 1 passed, 1 total
-Tests:       7 passed, 7 total
+31/31 passed
 ```
 
-Evidence:
+## 2. TDD and Regression Table
 
-* `assets/screenshots/red-failing-test.png`
-* `assets/screenshots/green-passing-test.png`
+| Issue | Purpose | Public interface(s) | RED | GREEN | REFACTOR | Evidence |
+|---|---|---|---|---|---|---|
+| #11 - Student receives actionable validation feedback | Validate required, invalid, and summary behavior | `validateAcademicTaskInput`, `createValidationFeedback` | Added Jest checks for required fields, invalid dates, and singular/plural summaries before the helpers were complete | Implemented field validation and summary generation in `src/task-logic.js` | Kept the logic pure so browser rendering could stay separate | `assets/screenshots/rebuild-issue-11-red-required-fields.txt`, `assets/screenshots/rebuild-issue-11-red-invalid-date.txt`, `assets/screenshots/rebuild-issue-11-green-required-fields.txt`, `assets/screenshots/rebuild-issue-11-green-invalid-date.txt` |
+| #13 - Student can change Academic Task status | Toggle Pending and Completed correctly | `toggleAcademicTaskStatus`, browser status buttons in `src/app.js` | Added tests for toggling the selected task while preserving the rest of the collection | Implemented immutable status toggling and browser re-render wiring | Kept the task array immutable and reused the same logic in the UI | `assets/screenshots/rebuild-issue-13-red-pending-completed.txt`, `assets/screenshots/rebuild-issue-13-red-completed-pending.txt`, `assets/screenshots/rebuild-issue-13-green-pending-completed.txt`, `assets/screenshots/rebuild-issue-13-green-completed-pending.txt` |
+| #21 - Reject impossible calendar Due Dates | Prevent impossible calendar dates from being accepted | `validateAcademicTaskInput` | Added failing tests for invalid calendar dates before the date guard existed | Added calendar validation that rejects impossible dates | Kept validation in the pure logic layer | `assets/screenshots/rebuild-issue-21-red-impossible-date.txt`, `assets/screenshots/rebuild-issue-21-green-impossible-date.txt` |
+| #27 - Show initial empty state after deleting the final Academic Task | Return to the initial empty state when the last task is deleted, even if a filter was active | `deleteAcademicTask`, `resolveFilterAfterDeletion`, `filterAcademicTasks`, delete dialog flow in `src/app.js` | Added a regression test for final-task deletion from a filtered view before the state-normalization helper existed | Implemented minimal state normalization so the app returns to `All` only when the list becomes empty | Kept the filter stable when tasks still remain, and limited the new helper to the delete flow | `assets/screenshots/issue-27-filtered-empty-state-320.png`, `assets/screenshots/issue-27-final-empty-state-320.png` |
 
----
+## 3. Public Interfaces Tested
 
-## 2. Test Coverage Table
+- `validateAcademicTaskInput(input, today)`
+- `createValidationFeedback(problems)`
+- `createAcademicTask(academicTasks, input)`
+- `toggleAcademicTaskStatus(academicTasks, selectedId)`
+- `deleteAcademicTask(academicTasks, selectedId)`
+- `filterAcademicTasks(academicTasks, filter)`
+- `resolveFilterAfterDeletion(academicTasks, activeFilter)`
+- Browser delete dialog, filter buttons, and task cards through `src/app.js`
 
-| Function tested                  | What it checks                                                 | Expected result                                             |
-| -------------------------------- | -------------------------------------------------------------- | ----------------------------------------------------------- |
-| `addTask`                        | Creates a task with the submitted title, subject, and due date | The returned list contains a task with the submitted values |
-| `addTask`                        | Sets initial status and generated fields                       | `completed` is `false`; `id` and `createdAt` are strings    |
-| `addTask`                        | Generates an ID for each new task                              | Two separately created tasks have different IDs             |
-| `deleteTask`                     | Removes the task with the matching ID                          | The matching task is absent from the returned list          |
-| `deleteTask`                     | Preserves tasks with other IDs                                 | Non-matching tasks remain unchanged                         |
-| `toggleComplete`                 | Changes an incomplete task to completed                        | The matching task has `completed: true`                     |
-| `toggleComplete`                 | Changes a completed task back to active                        | Toggling again sets `completed: false`                      |
-| `filterTasks` with `"active"`    | Selects only incomplete tasks                                  | Only tasks with `completed: false` are returned             |
-| `filterTasks` with `"completed"` | Selects only completed tasks                                   | Only tasks with `completed: true` are returned              |
-| `filterTasks` with `"all"`       | Returns every task regardless of status                        | All input tasks are returned                                |
+## 4. Evidence Paths
 
----
+Historical TDD evidence:
 
-## 3. TDD Evidence
+- `assets/screenshots/rebuild-issue-11-red-required-fields.txt`
+- `assets/screenshots/rebuild-issue-11-red-invalid-date.txt`
+- `assets/screenshots/rebuild-issue-11-green-required-fields.txt`
+- `assets/screenshots/rebuild-issue-11-green-invalid-date.txt`
+- `assets/screenshots/rebuild-issue-13-red-pending-completed.txt`
+- `assets/screenshots/rebuild-issue-13-red-completed-pending.txt`
+- `assets/screenshots/rebuild-issue-13-green-pending-completed.txt`
+- `assets/screenshots/rebuild-issue-13-green-completed-pending.txt`
 
-### TDD Issue 1: User can add a new task
+Historical regression evidence:
 
-#### Issue tested
+- `assets/screenshots/rebuild-issue-21-red-impossible-date.txt`
+- `assets/screenshots/rebuild-issue-21-green-impossible-date.txt`
 
-Issue 1 — User can add a new task
+Current final delivery evidence:
 
-#### Behavior under test
+- [assets/screenshots/issue-27-filtered-empty-state-320.png](../assets/screenshots/issue-27-filtered-empty-state-320.png)
+- [assets/screenshots/issue-27-final-empty-state-320.png](../assets/screenshots/issue-27-final-empty-state-320.png)
 
-A student can create a task with a title, subject, optional due date, generated ID, `createdAt` value, and default completed status.
-
-#### Public interface
-
-```js
-addTask(tasks, title, subject, dueDate)
-```
-
-#### RED
-
-The first task-creation test described the required Task fields before `addTask` existed as an importable pure function:
-
-```js
-describe("addTask", () => {
-  it("creates a task with the correct fields and completed set to false", () => {
-    const result = addTask([], "Write essay", "English", "2026-06-20");
-    const task = result[0];
-
-    expect(task).toEqual(expect.objectContaining({
-      title: "Write essay",
-      subject: "English",
-      dueDate: "2026-06-20",
-      completed: false
-    }));
-
-    expect(task.id).toEqual(expect.any(String));
-    expect(task.createdAt).toEqual(expect.any(String));
-  });
-});
-```
-
-Before the pure logic module was available, the test failed because Jest could not use `addTask` as an importable function. This confirmed that the task creation behavior was not yet independently testable outside the browser DOM.
-
-Possible failing result during the RED phase:
+## 5. Final Automated Result
 
 ```text
-TypeError: addTask is not a function
+31/31 passed
 ```
 
-RED evidence screenshot:
-
-```text
-assets/screenshots/red-failing-test.png
-```
-
-#### GREEN
-
-The minimum pure implementation created a valid Task object and returned a new task list:
-
-```js
-function addTask(tasks, title, subject, dueDate = "") {
-  const cleanTitle = String(title).trim();
-  const cleanSubject = String(subject).trim();
-  const cleanDueDate = String(dueDate).trim();
-
-  if (!cleanTitle || !cleanSubject) {
-    throw new Error("Task title and subject are required.");
-  }
-
-  const task = {
-    id: createTaskId(),
-    title: cleanTitle,
-    subject: cleanSubject,
-    dueDate: cleanDueDate,
-    completed: false,
-    createdAt: new Date().toISOString()
-  };
-
-  return [task, ...tasks];
-}
-```
-
-After implementing and exporting this function, the task creation test passed.
-
-GREEN evidence screenshot:
-
-```text
-assets/screenshots/green-passing-test.png
-```
-
-#### REFACTOR
-
-The task creation logic was moved into `src/task-logic.js` so it could be tested separately from DOM rendering and browser storage. This made the logic reusable by both Jest tests and the browser app.
-
-#### Final result
-
-Pass.
-
----
-
-### TDD Issue 2: User can mark a task as completed
-
-#### Issue tested
-
-Issue 3 — User can mark a task as completed
-
-#### Behavior under test
-
-A student can toggle a task from active to completed and then toggle it back to active.
-
-#### Public interface
-
-```js
-toggleComplete(tasks, id)
-```
-
-#### RED
-
-The test expected the matching task's `completed` value to change when `toggleComplete` was called. Before the pure logic function was available, this behavior could not be tested without depending on the browser UI.
-
-```js
-describe("toggleComplete", () => {
-  it("flips completed from false to true and back", () => {
-    const tasks = addTask([], "Read chapter", "Software Engineering", "2026-06-25");
-    const taskId = tasks[0].id;
-
-    const completedTasks = toggleComplete(tasks, taskId);
-    expect(completedTasks[0].completed).toBe(true);
-
-    const activeTasks = toggleComplete(completedTasks, taskId);
-    expect(activeTasks[0].completed).toBe(false);
-  });
-});
-```
-
-Possible failing result during the RED phase:
-
-```text
-TypeError: toggleComplete is not a function
-```
-
-RED evidence screenshot:
-
-```text
-assets/screenshots/red-failing-test.png
-```
-
-#### GREEN
-
-The minimum implementation returned a new task list and changed only the matching task:
-
-```js
-function toggleComplete(tasks, id) {
-  return tasks.map((task) => {
-    if (task.id !== id) {
-      return task;
-    }
-
-    return {
-      ...task,
-      completed: !task.completed
-    };
-  });
-}
-```
-
-After implementing this function, the completion toggle test passed together with the other task logic tests.
-
-GREEN evidence screenshot:
-
-```text
-assets/screenshots/green-passing-test.png
-```
-
-#### REFACTOR
-
-The function was written without mutating the original task array. This made the behavior safer, easier to test, and easier to reuse in the browser app.
-
-#### Final result
-
-Pass.
-
----
-
-## 4. Browser Verification Checklist
-
-Manual checks completed in Chrome using the running static app:
-
-* [x] Add a task and confirm it appears in the list.
-* [x] Refresh the page and confirm tasks are still there through `localStorage`.
-* [x] Mark a task complete and confirm its visual appearance changes.
-* [x] Delete a task and confirm it disappears.
-* [x] Filter by Active and confirm only incomplete tasks are shown.
-* [x] Filter by Completed and confirm only completed tasks are shown.
-* [x] Open Chrome DevTools Console and confirm there are no unexpected errors.
-* [x] Resize the window to 375px wide and confirm the layout remains usable.
-
-Evidence:
-
-* `assets/screenshots/app-working-browser.png`
-* `assets/screenshots/devtools-localstorage.png`
-* `assets/screenshots/devtools-console.png`
-* `assets/screenshots/mobile-375px.png`
-
----
-
-## 5. Chrome DevTools Notes
-
-### Test Environment
-
-* Browser: Chrome
-* Operating system: Windows
-* Test date: June 11, 2026
-* App URL: `http://127.0.0.1:5500/`
-
-### Console Check
-
-* Unexpected errors found: No
-* Warnings found: No blocking warnings found
-* Notes: The Console was checked after adding a task, marking a task complete, using the Active and Completed filters, and deleting a task.
-
-Evidence:
-
-```text
-assets/screenshots/devtools-console.png
-```
-
-### Local Storage Check
-
-* `student-tasks` key present: Yes
-* Added tasks persisted after refresh: Yes
-* Completed status persisted after refresh: Yes
-* Deleted tasks remained deleted after refresh: Yes
-* Notes: Task data was stored in browser `localStorage` using the `student-tasks` key.
-
-Evidence:
-
-```text
-assets/screenshots/devtools-localstorage.png
-```
-
-### Responsive Check at 375px
-
-* Form usable: Yes
-* Filter buttons usable: Yes
-* Task cards readable: Yes
-* Horizontal overflow found: No
-* Notes: The layout was tested at 375px width and remained usable on a mobile-sized viewport.
-
-Evidence:
-
-```text
-assets/screenshots/mobile-375px.png
-```
-
-### Final Browser Verification Result
-
-* Result: Pass
-* Known limitations: Data is stored only in the current browser. It can be removed if the user clears browser storage.
-* Screenshot or evidence path:
-
-  * `assets/screenshots/red-failing-test.png`
-  * `assets/screenshots/green-passing-test.png`
-  * `assets/screenshots/app-working-browser.png`
-  * `assets/screenshots/devtools-localstorage.png`
-  * `assets/screenshots/devtools-console.png`
-  * `assets/screenshots/mobile-375px.png`
-
----
-
-## 6. Final Testing Result
-
-The automated Jest tests passed, and the browser verification was completed manually in Chrome. The application successfully supports adding tasks, viewing tasks, marking tasks as completed, deleting tasks, filtering by status, and persisting data through `localStorage`.
-
-Final result: Pass.
+Syntax checks: PASS  
+`git diff --check`: PASS
+
+## 6. Final Chrome DevTools MCP Matrix
+
+| Scenario | Result |
+|---|---|
+| Initial empty state | PASS |
+| Required and invalid input | PASS |
+| Valid Academic Task creation | PASS |
+| Duplicate Academic Tasks | PASS |
+| Ordering by Due Date | PASS |
+| Overdue condition | PASS |
+| Pending to Completed and back | PASS |
+| Filter All, Pending, Completed | PASS |
+| Safe deletion cancel | PASS |
+| Safe deletion confirm | PASS |
+| Persistence after refresh | PASS |
+| Invalid localStorage recovery | PASS |
+| Partially invalid localStorage recovery | PASS |
+| Save failure behavior | PASS |
+| Offline behavior | PASS |
+| Keyboard and focus behavior | PASS |
+| Accessible announcements | PASS |
+| Desktop viewport | PASS |
+| 320px viewport | PASS |
+| No horizontal overflow | PASS |
+| No unexpected console errors | PASS |
+
+## 7. Chrome DevTools MCP Tools Used
+
+- `select_page`
+- `navigate_page`
+- `take_snapshot`
+- `fill_form`
+- `click`
+- `press_key`
+- `wait_for`
+- `evaluate_script`
+- `list_console_messages`
+- `resize_page`
+- `take_screenshot`
+
+## 8. Final Result and Known Limitations
+
+Final result: PASS.
+
+Known limitations:
+
+- No backend or cloud synchronization.
+- No user accounts or authentication.
+- Data remains browser-local in `localStorage`.
+- Clearing browser storage removes saved Academic Tasks.
+- Offline support is limited to the browser session and local persistence model already verified in Issue #16.
