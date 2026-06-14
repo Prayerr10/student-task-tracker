@@ -59,6 +59,14 @@ function createTaskCard(academicTask) {
   status.className = "status-badge";
   status.textContent = academicTask.status;
 
+  const overdue = AcademicTaskDomain.isAcademicTaskOverdue(academicTask, getLocalCalendarDate());
+  if (overdue) {
+    const overdueText = document.createElement("span");
+    overdueText.className = "overdue-badge";
+    overdueText.textContent = "Overdue";
+    status.append(" · ", overdueText);
+  }
+
   const title = document.createElement("h3");
   title.textContent = academicTask.title;
 
@@ -68,7 +76,7 @@ function createTaskCard(academicTask) {
 
   const dueDate = document.createElement("p");
   dueDate.className = "task-due-date";
-  dueDate.textContent = `Due Date: ${academicTask.dueDate}`;
+  dueDate.textContent = `Due Date: ${AcademicTaskDomain.formatDueDate(academicTask.dueDate)}`;
 
   article.append(status, title, course, dueDate);
   return article;
@@ -93,7 +101,7 @@ function renderAcademicTasks() {
     return;
   }
 
-  academicTasks.forEach((academicTask) => {
+  AcademicTaskDomain.orderAcademicTasks(academicTasks).forEach((academicTask) => {
     taskList.append(createTaskCard(academicTask));
   });
 }
