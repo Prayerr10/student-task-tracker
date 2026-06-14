@@ -2,110 +2,327 @@
 
 ## 1. Product Overview
 
-Student Task Tracker is a simple browser-based web app for university and college students to manage assignments, deadlines, and study tasks across multiple subjects. It provides one place to add, view, complete, delete, and filter tasks.
+Student Task Tracker is a static browser-based application for an individual
+Student who needs to manage personal Academic Tasks across multiple Courses.
 
-The app requires no login, works offline, stores data in browser `localStorage`, and can be deployed as static HTML, CSS, and JavaScript.
+The product gives the Student one place to add, view, complete, reopen, delete,
+and filter Academic Tasks. It works without an account or backend, supports
+offline use after its files are available, and persists Academic Tasks in the
+Student's browser.
 
-## 2. Goals
+## 2. Problem Statement
 
-- Help students avoid forgetting academic deadlines.
-- Give students a clear view of pending and completed tasks.
-- Make common task-management actions quick and easy.
-- Preserve task data after page refreshes.
-- Deliver a usable, responsive product within two days.
+A Student often receives Academic Task information from multiple sources,
+including Course platforms, messages, notes, and classroom discussions.
 
-## 3. Non-Goals
+Because this information is scattered, the Student may struggle to identify
+which Academic Tasks remain Pending and when their Due Dates occur.
 
-- Supporting accounts, authentication, or multiple users.
-- Synchronizing tasks between devices or browsers.
-- Replacing a full calendar or learning management system.
-- Supporting collaboration, task sharing, or notifications.
-- Providing advanced task planning or analytics.
+## 3. Solution
 
-## 4. Target Users
+Provide a small, accessible task-tracking application that allows a Student to:
 
-University and college students who manage assignments, deadlines, and study tasks across multiple subjects and want a simple tool that works without an account or internet connection.
+- Record Academic Tasks using a Task Title, Course, and Due Date.
+- See Pending, Completed, and Overdue conditions clearly.
+- Change an Academic Task between Pending and Completed.
+- Delete an Academic Task after confirmation.
+- Filter Academic Tasks by status.
+- Retain Academic Tasks after refreshing or reopening the application.
 
-## 5. User Stories
+## 4. Goals
 
-- As a student, I want to add a task with a title, subject, and due date, so that I can remember my academic work.
-- As a student, I want to view all my tasks in one list, so that I can understand my current workload.
-- As a student, I want to mark a task as complete, so that I can track the work I have finished.
-- As a student, I want to delete a task, so that I can remove work I no longer need to track.
-- As a student, I want to filter tasks by status, so that I can focus on pending or completed work.
-- As a student, I want my tasks to remain after refreshing the page, so that I do not lose my task list.
+- Give the Student one reliable view of personal Academic Tasks.
+- Make Pending Academic Tasks and their Due Dates easy to identify.
+- Make Overdue Academic Tasks clearly recognizable.
+- Support the complete main user flow without unexpected errors.
+- Preserve Academic Tasks in the same browser and device.
+- Keep the product achievable within the two-day assignment scope.
+- Produce observable, testable behavior suitable for automated and browser
+  verification.
 
-## 6. Core Features
+## 5. Non-Goals
 
-1. **Add Task:** Create a task with a title, subject, and due date.
-2. **View Task List:** Display all saved tasks and their important details.
-3. **Mark Complete:** Change a pending task to completed and show its completed state.
-4. **Delete Task:** Permanently remove an unwanted task.
-5. **Filter by Status:** Show all, pending, or completed tasks.
+- Replace a calendar, Course platform, or learning management system.
+- Support accounts, authentication, instructors, groups, or multiple users.
+- Synchronize Academic Tasks across browsers or devices.
+- Edit an existing Academic Task.
+- Provide notifications, reminders, collaboration, or advanced planning.
+- Provide localization or a native mobile application.
 
-## 7. Acceptance Criteria
+## 6. Target Users
 
-### Feature 1: Add Task
+The primary target user is an individual university or college Student managing
+personal Academic Tasks across multiple Courses.
 
-- A user can submit a task containing a title, subject, and valid due date.
-- A newly added task appears in the task list as pending.
-- Required fields are clearly labeled.
-- Submission is prevented and a clear message is shown when a required field is empty or invalid.
-- The new task is saved to `localStorage`.
+The product assumes one Student uses it on one browser and device.
 
-### Feature 2: View Task List
+## 7. User Stories
 
-- Each task displays its title, subject, due date, and completion status.
-- Saved tasks load from `localStorage` when the app opens or refreshes.
-- Completed tasks are visually distinguishable from pending tasks.
-- A clear empty-state message appears when there are no tasks.
+1. As a Student, I want to add an Academic Task with a Task Title, Course, and
+   Due Date, so that I can record work I need to complete.
+2. As a Student, I want required fields to be clearly labeled, so that I
+   understand what information must be provided.
+3. As a Student, I want invalid input to be rejected with specific messages, so
+   that I can correct it.
+4. As a Student, I want my entered values preserved after failed validation, so
+   that I do not need to enter them again.
+5. As a Student, I want duplicate Academic Tasks to be allowed, so that valid
+   work with identical details can still be tracked separately.
+6. As a Student, I want to see all Academic Tasks ordered by Due Date, so that I
+   can identify the work due soonest.
+7. As a Student, I want each Academic Task to show its Task Title, Course, Due
+   Date, and status, so that I can understand it quickly.
+8. As a Student, I want Pending Academic Tasks with passed Due Dates to show
+   Overdue, so that I can recognize late work.
+9. As a Student, I want to mark a Pending Academic Task as Completed, so that I
+   can track finished work.
+10. As a Student, I want to return a Completed Academic Task to Pending, so that
+    I can correct an accidental status change.
+11. As a Student, I want Completed Academic Tasks to remain available, so that I
+    can review or reopen them.
+12. As a Student, I want to filter Academic Tasks by All, Pending, or Completed,
+    so that I can focus on relevant work.
+13. As a Student, I want clear empty-state messages, so that I understand whether
+    no Academic Tasks exist or no results match the selected filter.
+14. As a Student, I want deletion to require confirmation, so that I do not
+    accidentally remove an Academic Task.
+15. As a keyboard user, I want the deletion confirmation and all core actions to
+    be keyboard-operable, so that I can use the application without a pointer.
+16. As a Student, I want brief accessible feedback after successful actions, so
+    that I know the application accepted them.
+17. As a Student, I want Academic Tasks to remain after refresh or reopening, so
+    that I do not lose my task list.
+18. As a Student, I want clear warnings when stored data cannot be restored or
+    saved, so that I understand the risk of data loss.
+19. As a mobile Student, I want the application usable at a 320px viewport
+    without horizontal scrolling, so that I can manage Academic Tasks on a small
+    screen.
+20. As a Student without internet access, I want all core features to remain
+    available, so that I can manage Academic Tasks offline.
 
-### Feature 3: Mark Complete
+## 8. Core Features
 
-- A user can mark a pending task as completed.
-- The task's visual status updates immediately.
-- The completed status persists after a page refresh.
-- Completing one task does not change other tasks.
+### 8.1 Add and Validate an Academic Task
 
-### Feature 4: Delete Task
+The Student can create an Academic Task using required Task Title, Course, and
+Due Date inputs. Validation rejects missing, whitespace-only, over-limit, and
+past-date values while preserving entered data and guiding the Student to the
+first invalid field.
 
-- A user can delete an individual task.
-- The deleted task disappears from the task list immediately.
-- The deleted task does not return after a page refresh.
-- Deleting one task does not remove other tasks.
+### 8.2 View the Ordered Academic Task List
 
-### Feature 5: Filter by Status
+The Student can view Academic Tasks with their important details and statuses.
+Academic Tasks are ordered by earliest Due Date, then earliest creation time.
 
-- A user can select All, Pending, or Completed filters.
-- All shows every saved task.
-- Pending shows only tasks that are not completed.
-- Completed shows only completed tasks.
-- The app shows a clear empty-state message when no tasks match the selected filter.
+### 8.3 Change Academic Task Status
 
-## 8. Success Criteria
+The Student can change an Academic Task between Pending and Completed.
+Applicable Pending Academic Tasks display Overdue when their Due Date has
+passed.
 
-- Users can add, view, complete, delete, and filter tasks without unexpected errors.
-- Task data and completion status persist after a page refresh.
-- Invalid task input is rejected with a clear message.
-- All core features work offline in a modern browser.
-- The main workflow is usable on desktop and mobile-sized viewports.
-- Browser testing confirms no unexpected console errors during the main workflow.
+### 8.4 Delete an Academic Task After Confirmation
 
-## 9. Risks
+The Student can permanently delete one Academic Task only after using an
+accessible confirmation dialog.
 
-- Users may lose data if they clear browser storage or use a different browser or device.
-- Invalid or corrupted `localStorage` data could prevent tasks from loading correctly.
-- Browser-specific behavior may affect date input or storage.
-- Additional feature requests could make the project too large for the two-day schedule.
-- Users may expect notifications or cross-device synchronization that the app does not provide.
+### 8.5 Filter Academic Tasks by Status
 
-## 10. Out-of-Scope Items
+The Student can select All, Pending, or Completed. All is the default whenever
+the application opens or refreshes.
 
-- User registration, login, and profiles.
-- Backend services, databases, and cloud synchronization.
-- Editing existing tasks.
-- Task reminders, notifications, and calendar integration.
-- Recurring tasks, subtasks, priorities, tags, notes, and attachments.
-- Sharing tasks or collaborating with other users.
-- Advanced sorting, search, analytics, and reporting.
+## 9. Acceptance Criteria
+
+### 9.1 Add and Validate an Academic Task
+
+- Task Title, Course, and Due Date are visibly labeled and required.
+- Valid input creates one separate Pending Academic Task.
+- Duplicate valid Academic Tasks are allowed.
+- Task Title is trimmed and limited to 120 characters.
+- Course is trimmed and limited to 80 characters.
+- Empty and whitespace-only Task Title or Course values are rejected.
+- A missing Due Date is rejected.
+- A Due Date before the Student's current local calendar date is rejected.
+- A Due Date equal to the current local calendar date is accepted.
+- Invalid submission displays specific messages near affected fields.
+- Invalid submission preserves entered values and focuses the first invalid
+  field.
+- Task Title and Course input is displayed as plain text and never executed as
+  HTML or script.
+- Successful creation displays brief accessible feedback.
+
+### 9.2 View the Ordered Academic Task List
+
+- Each Academic Task displays Task Title, Course, Due Date, and status.
+- Due Date uses an unambiguous English format such as `Jun 20, 2026`.
+- Internal identifiers and creation time are not shown.
+- Academic Tasks with earlier Due Dates appear first.
+- Academic Tasks with equal Due Dates appear in earliest-creation order.
+- When no Academic Tasks exist, the Student is prompted to add the first one.
+- The list remains responsive with at least 100 Academic Tasks.
+
+### 9.3 Change Academic Task Status
+
+- A Pending Academic Task can be changed to Completed.
+- A Completed Academic Task can be changed to Pending.
+- A status change affects only the selected Academic Task.
+- Completed Academic Tasks do not display Overdue.
+- A Pending Academic Task displays Overdue after its Due Date passes.
+- An Academic Task due today does not display Overdue.
+- Reopening a Completed Academic Task displays Overdue immediately when its Due
+  Date has passed.
+- Status and Overdue conditions are not communicated using color alone.
+- Successful status changes provide brief accessible feedback.
+
+### 9.4 Delete an Academic Task After Confirmation
+
+- Requesting deletion opens a confirmation dialog identifying the Academic Task
+  by Task Title.
+- The dialog provides clear Cancel and Delete actions.
+- Cancelling or pressing `Escape` preserves the Academic Task.
+- Focus moves into the dialog and returns to the original delete control after
+  cancellation.
+- Confirming deletion removes only the selected Academic Task.
+- A deleted Academic Task does not return after refresh.
+- Successful deletion provides brief accessible feedback.
+
+### 9.5 Filter Academic Tasks by Status
+
+- All displays every Academic Task.
+- Pending displays Pending Academic Tasks, including Overdue Academic Tasks.
+- Completed displays Completed Academic Tasks.
+- There is no separate Overdue filter.
+- All is selected whenever the application opens or refreshes.
+- When no Academic Tasks match a filter, a filtered empty state is displayed.
+- An Academic Task immediately disappears when a status change means it no
+  longer matches the active filter.
+- The status change remains clearly communicated when the Academic Task
+  disappears from the filtered result.
+
+### 9.6 Persistence, Reliability, and Cross-Cutting Behavior
+
+- Added, updated, and deleted Academic Tasks retain their correct state after
+  refresh or reopening.
+- The selected filter is not persisted.
+- Entirely invalid stored data does not prevent the application from opening and
+  produces a clear warning.
+- Partially invalid stored data restores valid Academic Tasks, ignores invalid
+  entries, and produces a partial-recovery warning.
+- A storage write failure leaves the application usable for the current session
+  and warns that changes may be lost.
+- All core features work offline after application files are available.
+- All core features are keyboard-operable.
+- Inputs have visible labels and controls have clear accessible names.
+- Important messages and actions are announced to assistive technology.
+- Focus indicators are clearly visible.
+- Text and controls meet WCAG AA contrast expectations.
+- The application is usable at 320px without horizontal page scrolling.
+- The main user flow produces no unexpected console errors in the latest Google
+  Chrome.
+
+## 10. Success Criteria
+
+- The Student completes the complete main user flow without unexpected errors.
+- Validation behavior rejects all defined invalid input cases.
+- Academic Task data and status remain correct after refresh.
+- Ordering, filtering, status transitions, Overdue behavior, deletion
+  confirmation, feedback, and empty states satisfy their acceptance criteria.
+- All core behavior works offline.
+- The application is keyboard-usable and remains usable at 320px.
+- The application remains responsive with at least 100 Academic Tasks.
+- Chrome DevTools verification shows correct browser storage and no unexpected
+  console errors.
+- New automated tests and browser evidence demonstrate important acceptance
+  criteria.
+
+## 11. Implementation Decisions
+
+The following decisions come directly from approved requirements:
+
+- The product is a static browser-side application without a backend.
+- Academic Task data is persisted using browser `localStorage`.
+- Each Academic Task contains Task Title, Course, Due Date, Pending or Completed
+  status, creation time for ordering, and a unique internal identifier.
+- Task Title, Course, and Due Date are required; there are no optional fields.
+- Course is entered as free text.
+- Academic Tasks are ordered by earliest Due Date and then earliest creation
+  time.
+- Overdue is a condition of a Pending Academic Task, not a separate status.
+- The only filters are All, Pending, and Completed.
+- Filter selection resets to All when the application opens or refreshes.
+- Completed Academic Tasks remain stored until manually deleted.
+- Deletion requires an accessible confirmation dialog.
+- Student-provided text is handled as plain text.
+- UI language is English only.
+- Exact visual design, module boundaries, technology libraries, and internal
+  representation remain design-stage decisions requiring human approval.
+
+## 12. Testing Decisions
+
+Good tests verify observable behavior through public interfaces and remain valid
+when private implementation changes.
+
+Approved test seams:
+
+- Use the browser UI as the highest acceptance-test seam for the main user flow,
+  validation, filtering, status changes, deletion confirmation, feedback,
+  keyboard operation, and empty states.
+- Use the browser UI with reload and controlled browser storage for persistence,
+  filter reset, invalid stored data, partial recovery, and write-failure
+  behavior.
+- Use Chrome DevTools MCP to verify console behavior, `localStorage`, offline
+  behavior, and the 320px responsive viewport.
+- Use a public domain-behavior interface for fast deterministic verification of
+  validation, ordering, status transitions, filtering, and Overdue calculation.
+- Do not test private functions, private state, internal DOM structure, or
+  implementation-specific call sequences.
+- Apply genuine RED, GREEN, and REFACTOR cycles to at least two approved
+  vertical-slice issues.
+- Existing historical tests and evidence may inform planning but do not count as
+  rebuild evidence.
+
+Final test tooling and the exact public domain-behavior interface require human
+approval during design.
+
+## 13. Risks
+
+- Clearing browser storage removes saved Academic Tasks.
+- Academic Tasks do not synchronize across browsers or devices.
+- Incorrect device dates can affect Due Date validation and Overdue behavior.
+- Browser storage may be unavailable, full, or contain invalid data.
+- Free-text Course values may become inconsistent.
+- Accessible dialog focus management and announcements require careful
+  implementation and verification.
+- Date-dependent tests may become unreliable unless the local calendar date is
+  controlled.
+- Scope creep could make the two-day assignment unrealistic.
+- Browser behavior outside the latest Google Chrome is only best effort.
+
+## 14. Out-of-Scope Items
+
+- Accounts, authentication, profiles, and multiple users.
+- Backend services, cloud synchronization, and cross-device access.
+- Editing an existing Academic Task.
+- Notifications, reminders, and calendar integration.
+- Recurring tasks, subtasks, priorities, notes, attachments, and tags.
+- Search and advanced sorting.
+- Filters based on Course, Due Date, or Overdue.
+- Collaboration and task sharing.
+- Import, export, backup, and restore.
+- Automatic deletion or archiving of Completed Academic Tasks.
+- Localization and multiple UI languages.
 - Native mobile applications.
+- Historical tracking of whether an Academic Task was completed late.
+- Full compatibility certification for browsers other than the latest Google
+  Chrome.
+- Full accessibility certification across every assistive-technology and browser
+  combination.
+
+## 15. Further Notes
+
+- The approved requirements in `docs/01-requirements.md` are authoritative.
+- `CONTEXT.md` defines the canonical domain terminology.
+- Existing implementation, tests, PRD, design, screenshots, and evidence are
+  historical references only.
+- The approved PRD must be stored in `docs/02-prd.md`.
+- Publishing the PRD as a GitHub Issue requires separate human approval.
+- No unresolved product-requirements questions remain.
