@@ -1,9 +1,12 @@
 "use strict";
 
-let academicTasks = [];
+const storageLoad = TaskStorage.loadAcademicTasks(window.localStorage);
+
+let academicTasks = storageLoad.academicTasks;
 let activeFilter = "All";
 let deletionSequence = 0;
 let deleteDialogContext = null;
+let pendingStorageWarning = storageLoad.warning;
 
 const academicTaskForm = document.querySelector("#academic-task-form");
 const titleInput = document.querySelector("#task-title");
@@ -12,6 +15,7 @@ const dueDateInput = document.querySelector("#task-due-date");
 const validationSummary = document.querySelector("#validation-summary");
 const taskList = document.querySelector("#task-list");
 const taskCount = document.querySelector("#task-count");
+const storageWarning = document.querySelector("#storage-warning");
 const notification = document.querySelector("#notification");
 const academicTasksHeading = document.querySelector("#academic-tasks-heading");
 const deleteDialog = document.querySelector("#delete-dialog");
@@ -21,6 +25,7 @@ const deleteDialogCancelButton = document.querySelector("#delete-dialog-cancel")
 const deleteDialogConfirmButton = document.querySelector("#delete-dialog-confirm");
 const filterButtons = [...document.querySelectorAll("[data-filter]")];
 let notificationTimeout;
+let storageWarningTimeout;
 let notificationSequence = 0;
 const fieldControls = {
   title: titleInput,
@@ -61,6 +66,32 @@ function showValidationFeedback(problems) {
   fieldControls[feedback.firstInvalidField].focus();
 }
 
+function showNotification(visualMessage, accessibleMessage, tone = "success") {
+  window.clearTimeout(notificationTimeout);
+  notification.classList.toggle("notification--warning", tone === "warning");
+  notification.classList.toggle("notification--success", tone !== "warning");
+
+  const visual = document.createElement("span");
+  visual.setAttribute("aria-hidden", "true");
+  visual.textContent = visualMessage;
+
+  const accessible = document.createElement("span");
+  accessible.className = "visually-hidden";
+  accessible.textContent = accessibleMessage;
+
+  notification.replaceChildren(visual, accessible);
+  notificationTimeout = window.setTimeout(() => {
+    notification.replaceChildren();
+    notification.classList.remove("notification--warning", "notification--success");
+  }, 4000);
+}
+
+function clearStorageWarning() {
+  window.clearTimeout(storageWarningTimeout);
+  storageWarning.textContent = "";
+  pendingStorageWarning = null;
+}
+
 function createTaskCard(academicTask) {
   const article = document.createElement("article");
   article.className = "task-card";
@@ -97,7 +128,13 @@ function createTaskCard(academicTask) {
     academicTasks = AcademicTaskDomain.toggleAcademicTaskStatus(academicTasks, academicTask.id);
     const updatedTask = academicTasks.find((task) => task.id === academicTask.id);
     renderAcademicTasks();
-    announceStatusChange(updatedTask);
+    const saveResult = persistAcademicTasks();
+    if (saveResult.warning) {
+      announceStorageWarning(saveResult.warning);
+    } else if (updatedTask) {
+      clearStorageWarning();
+      announceStatusChange(updatedTask);
+    }
     const updatedStatusButton = document.querySelector(`[data-task-id="${academicTask.id}"] .status-button`);
     (updatedStatusButton || document.querySelector(`[data-filter="${activeFilter}"]`))?.focus();
   });
@@ -118,6 +155,10 @@ function renderAcademicTasks() {
   taskList.replaceChildren();
   const filteredTasks = AcademicTaskDomain.filterAcademicTasks(academicTasks, activeFilter);
   taskCount.textContent = `${filteredTasks.length} Academic ${filteredTasks.length === 1 ? "Task" : "Tasks"}`;
+
+  if (pendingStorageWarning) {
+    storageWarning.textContent = pendingStorageWarning;
+  }
 
   if (academicTasks.length === 0) {
     const emptyState = document.createElement("div");
@@ -165,48 +206,39 @@ filterButtons.forEach((button) => {
 });
 
 function announceSuccessfulCreation() {
-  window.clearTimeout(notificationTimeout);
   const announcement = NotificationLogic.createSuccessfulCreationAnnouncement(notificationSequence);
   notificationSequence = announcement.sequence;
-
-  const visualMessage = document.createElement("span");
-  visualMessage.setAttribute("aria-hidden", "true");
-  visualMessage.textContent = announcement.visualMessage;
-
-  const accessibleMessage = document.createElement("span");
-  accessibleMessage.className = "visually-hidden";
-  accessibleMessage.textContent = announcement.accessibleMessage;
-
-  notification.replaceChildren(visualMessage, accessibleMessage);
-  notificationTimeout = window.setTimeout(() => {
-    notification.replaceChildren();
-  }, 4000);
+  showNotification(announcement.visualMessage, announcement.accessibleMessage);
 }
 
 function announceStatusChange(academicTask) {
-  window.clearTimeout(notificationTimeout);
-  notification.textContent = `${academicTask.title} changed to ${academicTask.status}.`;
-  notificationTimeout = window.setTimeout(() => {
-    notification.replaceChildren();
-  }, 4000);
+  showNotification(
+    `${academicTask.title} changed to ${academicTask.status}.`,
+    `${academicTask.title} changed to ${academicTask.status}.`
+  );
 }
 
 function announceDeletion(academicTask) {
-  window.clearTimeout(notificationTimeout);
   const announcement = NotificationLogic.createSuccessfulDeletionAnnouncement(deletionSequence);
   deletionSequence = announcement.sequence;
-  const visualMessage = document.createElement("span");
-  visualMessage.setAttribute("aria-hidden", "true");
-  visualMessage.textContent = announcement.visualMessage;
+  showNotification(announcement.visualMessage, `${announcement.accessibleMessage} ${academicTask.title}.`);
+}
 
-  const accessibleMessage = document.createElement("span");
-  accessibleMessage.className = "visually-hidden";
-  accessibleMessage.textContent = `${announcement.accessibleMessage} ${academicTask.title}.`;
-
-  notification.replaceChildren(visualMessage, accessibleMessage);
-  notificationTimeout = window.setTimeout(() => {
-    notification.replaceChildren();
+function announceStorageWarning(message) {
+  clearStorageWarning();
+  pendingStorageWarning = message;
+  storageWarning.textContent = message;
+  showNotification(message, message, "warning");
+  storageWarningTimeout = window.setTimeout(() => {
+    storageWarning.textContent = "";
+    if (pendingStorageWarning === message) {
+      pendingStorageWarning = null;
+    }
   }, 4000);
+}
+
+function persistAcademicTasks() {
+  return TaskStorage.saveAcademicTasks(window.localStorage, academicTasks);
 }
 
 function openDeleteDialog(academicTask, triggerButton) {
@@ -254,7 +286,11 @@ deleteDialog.addEventListener("close", () => {
     const deletedAcademicTask = academicTasks.find((academicTask) => academicTask.id === academicTaskId);
     academicTasks = AcademicTaskDomain.deleteAcademicTask(academicTasks, academicTaskId);
     renderAcademicTasks();
-    if (deletedAcademicTask) {
+    const saveResult = persistAcademicTasks();
+    if (saveResult.warning) {
+      announceStorageWarning(saveResult.warning);
+    } else if (deletedAcademicTask) {
+      clearStorageWarning();
       announceDeletion(deletedAcademicTask);
     }
     focusAfterDeletion(deletedIndex);
@@ -284,8 +320,14 @@ academicTaskForm.addEventListener("submit", (event) => {
   clearValidationFeedback();
   academicTasks = AcademicTaskDomain.createAcademicTask(academicTasks, input);
   renderAcademicTasks();
+  const saveResult = persistAcademicTasks();
   academicTaskForm.reset();
-  announceSuccessfulCreation();
+  if (saveResult.warning) {
+    announceStorageWarning(saveResult.warning);
+  } else {
+    clearStorageWarning();
+    announceSuccessfulCreation();
+  }
   titleInput.focus();
 });
 
