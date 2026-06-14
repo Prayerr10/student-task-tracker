@@ -127,6 +127,16 @@ describe("validateAcademicTaskInput", () => {
     });
   });
 
+  it("rejects an impossible calendar Due Date", () => {
+    expect(validateAcademicTaskInput({
+      title: "Research outline",
+      course: "Software Engineering",
+      dueDate: "2026-02-31"
+    }, "2026-02-01")).toEqual({
+      dueDate: "Enter a valid Due Date."
+    });
+  });
+
   it("rejects a past Due Date", () => {
     expect(validateAcademicTaskInput({
       title: "Research outline",

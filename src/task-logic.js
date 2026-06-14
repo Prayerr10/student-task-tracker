@@ -17,6 +17,19 @@
     return `academic-task-${Date.now()}-${Math.random().toString(16).slice(2)}`;
   }
 
+  function isValidCalendarDate(value) {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(value)) {
+      return false;
+    }
+
+    const [year, month, day] = value.split("-").map(Number);
+    const date = new Date(Date.UTC(year, month - 1, day));
+
+    return date.getUTCFullYear() === year
+      && date.getUTCMonth() === month - 1
+      && date.getUTCDate() === day;
+  }
+
   function createAcademicTask(academicTasks, input) {
     const academicTask = {
       id: createId(),
@@ -47,7 +60,7 @@
 
     if (!String(input.dueDate).trim()) {
       problems.dueDate = "Due Date is required.";
-    } else if (!/^\d{4}-\d{2}-\d{2}$/.test(String(input.dueDate))) {
+    } else if (!isValidCalendarDate(String(input.dueDate))) {
       problems.dueDate = "Enter a valid Due Date.";
     } else if (today && input.dueDate < today) {
       problems.dueDate = "Due Date cannot be in the past.";
